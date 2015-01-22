@@ -1,0 +1,14 @@
+{
+	"nick": "Quarid",
+	"user": "quarid",
+
+	"server": "irc.unerror.com:6697",
+	"tls": {
+		"verify": false,
+		"enable": true
+	},
+	"channels": ["#offtopic"],
+	"admins": ["enmand", "orcam"],
+
+	"plugins": ["random", "quit"]
+}
