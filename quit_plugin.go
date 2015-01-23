@@ -33,6 +33,7 @@ func quitHandler(con *irc.Connection, config *Config, msgCh chan *Message) {
 		if msg.Nick == nick {
 			con.SendRawf("QUIT %s", DEFAULT_QUIT_MSG)
 			con.Disconnect()
+			con.Quit()
 		}
 	}
 }
