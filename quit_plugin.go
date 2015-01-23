@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"regexp"
 
 	"github.com/thoj/go-ircevent"
@@ -12,10 +11,7 @@ const DEFAULT_QUIT_MSG = "Leaving..."
 func init() {
 	const PLUGIN_NAME = "quit"
 
-	trigger, err := regexp.Compile("^@quit")
-	if err != nil {
-		fmt.Errorf("Could not load plugin %s", PLUGIN_NAME)
-	}
+	trigger := regexp.MustCompile("^@quit")
 
 	commands := TriggerCommands{
 		trigger: Command{

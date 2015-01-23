@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"math/rand"
 	"regexp"
 	"time"
@@ -12,10 +11,7 @@ import (
 func init() {
 	const PLUGIN_NAME = "random"
 
-	trigger, err := regexp.Compile("^@random")
-	if err != nil {
-		fmt.Errorf("Could not load plugin %s", PLUGIN_NAME)
-	}
+	trigger := regexp.MustCompile("^@random$")
 
 	commands := TriggerCommands{
 		trigger: Command{
