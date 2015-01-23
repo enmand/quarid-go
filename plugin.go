@@ -15,6 +15,8 @@ func init() {
 	activePlugins = map[string]Plugin{}
 }
 
+type TriggerCommands map[*regexp.Regexp]Command
+
 type Command struct {
 	Handler func(con *irc.Connection, config *Config, m chan *Message)
 }

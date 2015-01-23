@@ -17,7 +17,7 @@ func init() {
 		fmt.Errorf("Could not load plugin %s", PLUGIN_NAME)
 	}
 
-	commands := map[*regexp.Regexp]Command{
+	commands := TriggerCommands{
 		trigger: Command{
 			Handler: randomHandler,
 		},
