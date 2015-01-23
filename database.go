@@ -9,7 +9,7 @@ import (
 	"gopkg.in/vmihailenco/msgpack.v2"
 )
 
-type DB map[string]interface{}
+type DB map[interface{}]interface{}
 type Database struct {
 	Path string
 	File *os.File
@@ -71,6 +71,41 @@ func (d Database) Save() error {
 	ioutil.WriteFile(filePath, dbFile, os.ModePerm)
 
 	return nil
+}
+
+func (d Database) Insert(data interface{}, keys ...string) error {
+	storage := d.Data
+	p := storage
+
+	for i, _key := range keys {
+		if _, ok := storage[_key]; !ok {
+			storage[_key] = map[interface{}]interface{}{}
+		}
+
+		if i == len(keys)-1 {
+			storage[_key] = data
+		}
+
+		storage = storage[_key].(map[interface{}]interface{})
+	}
+
+	d.Data = p
+	return d.Save()
+
+	return nil
+}
+
+func (d Database) Find(keys ...string) (map[interface{}]interface{}, error) {
+	p := d.Data
+
+	for _, _key := range keys {
+		var ok bool
+		if p, ok = p[_key].(map[interface{}]interface{}); !ok {
+			return nil, fmt.Errorf("No value found for %v", keys)
+		}
+	}
+
+	return p, nil
 }
 
 func openDb(path string) (*os.File, error) {
