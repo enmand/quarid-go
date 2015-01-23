@@ -45,9 +45,11 @@ func findCommand(msgCh chan *Message, cmdCh chan Command) {
 
 	for _, plugin := range activePlugins {
 		go func(plugin Plugin) {
+
 			for trigger, cmd := range plugin.Commands {
 				if trigger.Match([]byte(msg.Message())) {
 					cmdCh <- cmd
+					msgCh <- msg
 				}
 			}
 		}(plugin)
