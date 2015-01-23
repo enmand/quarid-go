@@ -10,5 +10,5 @@
 	"channels": ["#offtopic"],
 	"admins": ["enmand", "orcam"],
 
-	"plugins": ["random", "quit"]
+	"plugins": ["random", "quit", "seen"]
 }
