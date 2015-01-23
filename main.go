@@ -69,17 +69,19 @@ func main() {
 		}
 	})
 
-	con.AddCallback("PRIVMSG", func(e *irc.Event) {
-		msg := &Message{e, e.Arguments[0]}
+	con.AddCallback("PRIVMSG", func(event *irc.Event) {
+		go func(e *irc.Event) {
+			msg := &Message{e, e.Arguments[0]}
 
-		msgCh := make(chan *Message)
-		cmdCh := make(chan Command)
-		go findCommand(msgCh, cmdCh)
-		msgCh <- msg
+			msgCh := make(chan *Message)
+			cmdCh := make(chan Command)
+			go findCommand(msgCh, cmdCh)
 
-		_cmd := <-cmdCh
-		go _cmd.Handler(con, config, msgCh)
-		msgCh <- msg
+			msgCh <- msg
+			_cmd := <-cmdCh
+			go _cmd.Handler(con, config, msgCh)
+
+		}(event)
 	})
 
 	con.Loop()
