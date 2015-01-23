@@ -81,6 +81,6 @@ func seenTriggerHandler(
 	con.Privmsgf(msg.Room, "Last saw '%s' at '%s' saying '%s'",
 		name,
 		seen,
-		data["saying"].(string),
+		strings.TrimSpace(data["saying"].(string)),
 	)
 }
