@@ -45,16 +45,10 @@ func updateSeenHandler(
 	room := strings.ToLower(msg.Room)
 	nick := strings.ToLower(msg.Nick)
 
-	db.Data = map[string]interface{}{
-		room: map[string]interface{}{
-			nick: map[string]interface{}{
-				"seen":   time.Now().Unix(),
-				"saying": msg.Message(),
-			},
-		},
-	}
-
-	db.Save()
+	db.Insert(map[interface{}]interface{}{
+		"seen":   time.Now().Unix(),
+		"saying": msg.Message(),
+	}, room, nick)
 }
 
 func seenTriggerHandler(
@@ -72,24 +66,21 @@ func seenTriggerHandler(
 		con.Log.Fatal(err)
 	}
 
-	if roomIdx, ok := db.Data[msg.Room]; ok {
-		roomIdx := roomIdx.(map[interface{}]interface{})
-		if nickIdx, ok := roomIdx[name]; ok {
-			nickIdx := nickIdx.(map[interface{}]interface{})
+	data, err := db.Find(msg.Room, name)
+	if err != nil {
+		con.Log.Print(err)
+		con.Privmsgf(msg.Room, "I've never seen '%s'", name)
 
-			seen := time.Unix(nickIdx["seen"].(int64), 0).
-				Local().
-				Format(time.RFC822)
-
-			con.Privmsgf(
-				msg.Room,
-				"Last saw '%s' at '%s' saying '%s'",
-				name,
-				seen,
-				nickIdx["saying"].(string),
-			)
-		} else {
-			con.Privmsgf(msg.Room, "I've never seen '%s'", name)
-		}
+		return
 	}
+
+	seen := time.Unix(data["seen"].(int64), 0).
+		Local().
+		Format(time.RFC822)
+
+	con.Privmsgf(msg.Room, "Last saw '%s' at '%s' saying '%s'",
+		name,
+		seen,
+		data["saying"].(string),
+	)
 }
