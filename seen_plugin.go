@@ -77,11 +77,15 @@ func seenTriggerHandler(
 		if nickIdx, ok := roomIdx[name]; ok {
 			nickIdx := nickIdx.(map[interface{}]interface{})
 
+			seen := time.Unix(nickIdx["seen"].(int64), 0).
+				Local().
+				Format(time.RFC822)
+
 			con.Privmsgf(
 				msg.Room,
 				"Last saw '%s' at '%s' saying '%s'",
 				name,
-				time.Unix(nickIdx["seen"].(int64), 0),
+				seen,
 				nickIdx["saying"].(string),
 			)
 		} else {
