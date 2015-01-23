@@ -14,6 +14,11 @@
 		{
 			"ImportPath": "github.com/thoj/go-ircevent",
 			"Rev": "5e6704d8956eeba81a2cbac9ba73bd609da39d0f"
+		},
+		{
+			"ImportPath": "gopkg.in/vmihailenco/msgpack.v2",
+			"Comment": "v2.1.3",
+			"Rev": "1efcd9943dd320d41d8a00189e568d794f1b4e78"
 		}
 	]
 }
