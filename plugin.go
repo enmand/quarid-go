@@ -22,7 +22,7 @@ type Command struct {
 }
 
 type Plugin struct {
-	Commands map[*regexp.Regexp]Command
+	Commands TriggerCommands
 }
 
 func RegisterPlugin(name string, plugin Plugin) {
