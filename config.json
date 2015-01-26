@@ -1,6 +1,7 @@
 {
 	"nick": "Quarid",
 	"user": "quarid",
+	"timezone": "America/New_York",
 
 	"server": "irc.unerror.com:6697",
 	"tls": {

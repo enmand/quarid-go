@@ -6,6 +6,8 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"log"
+	"time"
 
 	"github.com/alecthomas/kingpin"
 	"github.com/thoj/go-ircevent"
@@ -25,8 +27,10 @@ type Message struct {
 }
 
 type Config struct {
-	Nick string `json:"nick"`
-	User string `json:"user"`
+	Nick         string         `json:"nick"`
+	User         string         `json:"user"`
+	TimezoneName string         `json:"timezone"`
+	Timeozone    *time.Location `json:"-"`
 
 	Server string `json:"server"`
 	TLS    struct {
@@ -91,13 +95,27 @@ func loadConfig(configFilePath string) (*Config, error) {
 	var configData []byte
 	var config Config
 	var err error
+
+	// Read configuration file
 	configData, err = ioutil.ReadFile(configFilePath)
 	if err != nil {
 		return nil, errors.New("Could not load configuration")
 	}
+
+	// Load configuration struct
 	if err = json.Unmarshal(configData, &config); err != nil {
 		return nil, errors.New("Could not parse JSON")
 	}
+
+	// Load timezone
+	location, err := time.LoadLocation(config.TimezoneName)
+	if err == nil {
+		config.Timeozone = location
+	} else {
+		config.Timeozone = time.UTC
+	}
+
+	fmt.Printf("Using timezone: '%s'\n", config.Timeozone.String())
 
 	return &config, nil
 }

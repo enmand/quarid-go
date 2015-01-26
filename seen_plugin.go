@@ -75,7 +75,7 @@ func seenTriggerHandler(
 	}
 
 	seen := time.Unix(data["seen"].(int64), 0).
-		Local().
+		In(config.Timeozone).
 		Format(time.RFC822)
 
 	con.Privmsgf(msg.Room, "Last saw '%s' at '%s' saying '%s'",
