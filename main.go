@@ -2,11 +2,7 @@ package main
 
 import (
 	"crypto/tls"
-	"encoding/json"
-	"errors"
 	"fmt"
-	"io/ioutil"
-	"time"
 
 	"github.com/alecthomas/kingpin"
 	"github.com/thoj/go-ircevent"
@@ -25,31 +21,15 @@ type Message struct {
 	Room string
 }
 
-type Config struct {
-	Nick         string         `json:"nick"`
-	User         string         `json:"user"`
-	TimezoneName string         `json:"timezone"`
-	Timeozone    *time.Location `json:"-"`
-
-	Server string `json:"server"`
-	TLS    struct {
-		Verify bool `json:"verify"`
-		Enable bool `json:"enable"`
-	} `json:"tls"`
-	Channels []string `json:"channels"`
-	Admins   []string `json:"admins"`
-
-	Plugins []string `json:"plugins"`
-}
-
 func main() {
 	kingpin.Version(VERSION)
 	kingpin.Parse()
 	config, err := loadConfig(*configFile)
 	if err != nil {
-		fmt.Errorf("Could not load configuration\n")
+		fmt.Errorf("Could not load configuration: %s\n", err)
 		return
 	}
+	fmt.Printf("Loading plugins...")
 	InitializePlugin(config)
 
 	con := irc.IRC(config.Nick, config.User)
@@ -88,33 +68,4 @@ func main() {
 	})
 
 	con.Loop()
-}
-
-func loadConfig(configFilePath string) (*Config, error) {
-	var configData []byte
-	var config Config
-	var err error
-
-	// Read configuration file
-	configData, err = ioutil.ReadFile(configFilePath)
-	if err != nil {
-		return nil, errors.New("Could not load configuration")
-	}
-
-	// Load configuration struct
-	if err = json.Unmarshal(configData, &config); err != nil {
-		return nil, errors.New("Could not parse JSON")
-	}
-
-	// Load timezone
-	location, err := time.LoadLocation(config.TimezoneName)
-	if err == nil {
-		config.Timeozone = location
-	} else {
-		config.Timeozone = time.UTC
-	}
-
-	fmt.Printf("Using timezone: '%s'\n", config.Timeozone.String())
-
-	return &config, nil
 }

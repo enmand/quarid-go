@@ -11,5 +11,8 @@
 	"channels": ["#offtopic"],
 	"admins": ["enmand", "orcam"],
 
+	// Path to logfile, or `true` for logging to stdout
+	"log_file": true,
+
 	"plugins": ["random", "quit", "seen"]
 }
