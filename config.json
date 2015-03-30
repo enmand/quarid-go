@@ -1,18 +1,21 @@
 {
 	"nick": "Quarid",
 	"user": "quarid",
-	"timezone": "America/New_York",
+	"timezone": "America\/New_York",
 
 	"server": "irc.unerror.com:6697",
 	"tls": {
 		"verify": false,
 		"enable": true
 	},
-	"channels": ["#offtopic"],
+	"channels": ["#t3st"],
 	"admins": ["enmand", "orcam"],
 
-	// Path to logfile, or `true` for logging to stdout
-	"log_file": true,
+	"log": {
+		"file": "stdout",
+		"level": 5,
+		"//": "See (github.com/sirupsen/logrus).Level for 'level' value"
+	},
 
-	"plugins": ["random", "quit", "seen"]
+	"plugin_blacklist": []
 }
