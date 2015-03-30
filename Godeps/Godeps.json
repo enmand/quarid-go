@@ -1,7 +1,12 @@
 {
 	"ImportPath": "bitbucket.org/enmand/quarid-go",
-	"GoVersion": "go1.4.1",
+	"GoVersion": "go1.4.2",
 	"Deps": [
+		{
+			"ImportPath": "github.com/Sirupsen/logrus",
+			"Comment": "v0.6.4-6-g539d4dc",
+			"Rev": "539d4dc034c079a7188b5d4ca9650632d73c66e8"
+		},
 		{
 			"ImportPath": "github.com/alecthomas/kingpin",
 			"Comment": "v1.3.3",
@@ -10,6 +15,10 @@
 		{
 			"ImportPath": "github.com/alecthomas/units",
 			"Rev": "6b4e7dc5e3143b85ea77909c72caf89416fc2915"
+		},
+		{
+			"ImportPath": "github.com/robertkrimen/otto",
+			"Rev": "c2346f4ada7cdbda7f3523c87d986c91d4677b98"
 		},
 		{
 			"ImportPath": "github.com/thoj/go-ircevent",
