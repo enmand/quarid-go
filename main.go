@@ -35,7 +35,7 @@ func main() {
 		return
 	}
 
-	bot := NewBot(config)
+	bot := services.NewBot(config)
 
 	bot.Connect()
 	defer bot.Disconnect()
