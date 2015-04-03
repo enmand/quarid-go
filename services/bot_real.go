@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/enmand/quarid-go/services"
 	"github.com/enmand/quarid-go/vm"
 
 	log "github.com/Sirupsen/logrus"
@@ -16,9 +15,9 @@ type quarid struct {
 	// Connection to the IRC server
 	Connection *irc.Connection
 	// Configuration from the user
-	Config *services.Config
+	Config *Config
 	// The Plugins we have loaded
-	plugins []services.Plugin
+	plugins []Plugin
 	// The VM for our Plugins
 	vms map[int]vm.VM
 	// The bot's logging service
@@ -54,8 +53,8 @@ func (q *quarid) Init() error {
 	return nil
 }
 
-func (q *quarid) LoadPlugins(dirs []string) ([]services.Plugin, []error) {
-	var ps []services.Plugin
+func (q *quarid) LoadPlugins(dirs []string) ([]Plugin, []error) {
+	var ps []Plugin
 	var errs []error
 
 	for _, d := range dirs {
@@ -66,7 +65,7 @@ func (q *quarid) LoadPlugins(dirs []string) ([]services.Plugin, []error) {
 
 		for _, fi := range fis {
 			if fi.IsDir() {
-				p := services.NewPlugin(
+				p := NewPlugin(
 					fi.Name(),
 					fmt.Sprintf("%s/%s", d, fi.Name()),
 				)

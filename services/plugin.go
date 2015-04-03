@@ -6,12 +6,11 @@ import (
 	"io/ioutil"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/enmand/quarid-go/services"
 	"github.com/enmand/quarid-go/vm"
 )
 
 type Plugin interface {
-	Load(b *services.Bot) error
+	Load(b Bot) error
 }
 
 func NewPlugin(name, path string) *plugin {
@@ -33,7 +32,7 @@ type plugin struct {
 	Configuration interface{} `json:"configuration"`
 }
 
-func (p *plugin) Load(b *services.Bot) error {
+func (p *plugin) Load(b Bot) error {
 	pp, err := p.pluginConfig()
 	if err != nil {
 		return err

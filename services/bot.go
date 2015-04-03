@@ -3,7 +3,6 @@ package services
 import (
 	"fmt"
 
-	"github.com/enmand/quarid-go/services"
 	"github.com/enmand/quarid-go/vm"
 
 	log "github.com/Sirupsen/logrus"
@@ -15,7 +14,7 @@ type Bot interface {
 	Init() error
 
 	// Load all of the plugins in each `dir`
-	LoadPlugins(dir []string) error
+	LoadPlugins(dir []string) ([]Plugin, []error)
 
 	// Connect to the configured server
 	Connect() error
@@ -33,7 +32,7 @@ type Bot interface {
 	VMs() map[int]vm.VM
 }
 
-func NewBot(cfg *services.Config) *quarid {
+func NewBot(cfg *Config) *quarid {
 	bot := &quarid{
 		Config: cfg,
 	}
