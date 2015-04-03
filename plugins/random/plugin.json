@@ -1,0 +1,8 @@
+{
+	"name": "random",
+	"vm": "js",
+	"main": "index.js",
+
+	"configuration": {}
+}
+
