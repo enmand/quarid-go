@@ -19,7 +19,7 @@ type quarid struct {
 	// The Plugins we have loaded
 	plugins []Plugin
 	// The VM for our Plugins
-	vms map[int]vm.VM
+	vms map[string]vm.VM
 	// The bot's logging service
 	Log *log.Logger
 }
@@ -43,7 +43,7 @@ func (q *quarid) Init() error {
 		}
 	}
 
-	q.vms = map[int]vm.VM{
+	q.vms = map[string]vm.VM{
 		vm.JS: vm.New(vm.JS),
 	}
 	q.vms[vm.JS].Initialize()
@@ -95,6 +95,10 @@ func (q *quarid) AddCallback(event string, f func(e *irc.Event)) string {
 
 func (q *quarid) ClearCallback(event string) bool {
 	return q.Connection.ClearCallback(event)
+}
+
+func (q *quarid) Plugins() []Plugin {
+	return q.plugins
 }
 
 func (q *quarid) Debugf(s string, f ...interface{}) {

@@ -3,8 +3,6 @@ package services
 import (
 	"fmt"
 
-	"github.com/enmand/quarid-go/vm"
-
 	log "github.com/Sirupsen/logrus"
 	"github.com/thoj/go-ircevent"
 )
@@ -29,7 +27,7 @@ type Bot interface {
 	ClearCallback(event string) bool
 
 	// Return a map of initialzed virtual machines for this bot
-	VMs() map[int]vm.VM
+	Plugins() []Plugin
 }
 
 func NewBot(cfg *Config) *quarid {
