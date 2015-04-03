@@ -1,4 +1,4 @@
-package main
+package services
 
 import (
 	"crypto/tls"
@@ -17,7 +17,9 @@ type quarid struct {
 	Connection *irc.Connection
 	// Configuration from the user
 	Config *services.Config
-	// The VM for our plugins
+	// The Plugins we have loaded
+	plugins []services.Plugin
+	// The VM for our Plugins
 	vms map[int]vm.VM
 	// The bot's logging service
 	Log *log.Logger
@@ -29,26 +31,55 @@ func (q *quarid) Init() error {
 	q.Connection.UseTLS = q.Config.TLS.Enable
 	q.Connection.TLSConfig = &tls.Config{InsecureSkipVerify: !q.Config.TLS.Verify}
 
+	var errs []error
+	q.plugins, errs = q.LoadPlugins(q.Config.PluginsDirs)
+	if errs != nil {
+		log.Warningf(
+			"Some plugins failed to load. The following are loaded: %q",
+			q.plugins,
+		)
+		log.Warningf("But the follow errors occurred:")
+		for _, e := range errs {
+			log.Warning(e)
+		}
+	}
+
 	q.vms = map[int]vm.VM{
 		vm.JS: vm.New(vm.JS),
 	}
 	q.vms[vm.JS].Initialize()
-	script, err := ioutil.ReadFile("./plugins/main.js")
-	if err != nil {
-		return err
-	}
-	_, err = q.vms[vm.JS].LoadScript("seen", string(script))
-	if err != nil {
-		return fmt.Errorf("Could not load script: %s", err)
-	}
-	_, err = q.vms[vm.JS].Run("seen")
-	if err != nil {
-		return err
-	}
 
 	q.Log = q.Config.Logger
 
 	return nil
+}
+
+func (q *quarid) LoadPlugins(dirs []string) ([]services.Plugin, []error) {
+	var ps []services.Plugin
+	var errs []error
+
+	for _, d := range dirs {
+		fis, err := ioutil.ReadDir(d)
+		if err != nil {
+			errs = append(errs, err)
+		}
+
+		for _, fi := range fis {
+			if fi.IsDir() {
+				p := services.NewPlugin(
+					fi.Name(),
+					fmt.Sprintf("%s/%s", d, fi.Name()),
+				)
+				if err := p.Load(); err != nil {
+					errs = append(errs, err)
+				} else {
+					ps = append(ps, p)
+				}
+
+			}
+		}
+	}
+	return ps, errs
 }
 
 func (q *quarid) Connect() error {

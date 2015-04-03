@@ -1,4 +1,4 @@
-package main
+package services
 
 import (
 	"fmt"
@@ -13,6 +13,9 @@ import (
 type Bot interface {
 	// Run initialization
 	Init() error
+
+	// Load all of the plugins in each `dir`
+	LoadPlugins(dir []string) error
 
 	// Connect to the configured server
 	Connect() error
