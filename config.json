@@ -17,5 +17,5 @@
 		"//": "See (github.com/sirupsen/logrus).Level for 'level' value"
 	},
 
-	"plugin_blacklist": []
+	"plugins_dirs": ["plugins"]
 }

@@ -25,7 +25,7 @@ type Config struct {
 
 	Log logType `json:"log"`
 
-	PluginBlacklist []string `json:"plugin_blacklist"`
+	PluginsDirs []string `json:"plugins_dirs"`
 
 	Logger *logrus.Logger `json:"-"`
 }
