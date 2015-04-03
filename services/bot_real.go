@@ -69,7 +69,7 @@ func (q *quarid) LoadPlugins(dirs []string) ([]Plugin, []error) {
 					fi.Name(),
 					fmt.Sprintf("%s/%s", d, fi.Name()),
 				)
-				if err := p.Load(); err != nil {
+				if err := p.Load(q); err != nil {
 					errs = append(errs, err)
 				} else {
 					ps = append(ps, p)
