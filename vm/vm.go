@@ -1,6 +1,5 @@
 package vm
 
-type Type int
 type Runnable interface{}
 
 type FunctionCall interface{}
@@ -12,12 +11,15 @@ type Handler struct {
 }
 
 const (
-	JS   = iota
-	JSv8 // developmental... more so than everything else
-	PY
-	LUA
-	PROLOG
-	PHP
+	JS = "js"
+
+	// TODO
+	JSv8    = "jsv8"
+	PY      = "py"
+	LUA     = "lua"
+	PROLOG  = "prolog"
+	PHP     = "php"
+	HASKELL = "haskell"
 )
 
 type VM interface {
@@ -31,7 +33,7 @@ type VM interface {
 	Run(name string) (string, error)
 }
 
-func New(typ Type) VM {
+func New(typ string) VM {
 	switch typ {
 	case JS:
 		return newJsVm()
