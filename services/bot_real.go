@@ -25,10 +25,20 @@ type quarid struct {
 }
 
 func (q *quarid) Init() error {
+	q.Log = q.Config.Logger
 	q.Connection = irc.IRC(q.Config.Nick, q.Config.User)
 
 	q.Connection.UseTLS = q.Config.TLS.Enable
 	q.Connection.TLSConfig = &tls.Config{InsecureSkipVerify: !q.Config.TLS.Verify}
+
+	// Initialize our VMs
+	q.vms = map[string]vm.VM{
+		vm.JS: vm.New(vm.JS),
+	}
+	for n, v := range q.vms {
+		v.Initialize()
+		log.Infof("Loaded VM for '%s'", n)
+	}
 
 	var errs []error
 	q.plugins, errs = q.LoadPlugins(q.Config.PluginsDirs)
@@ -42,13 +52,6 @@ func (q *quarid) Init() error {
 			log.Warning(e)
 		}
 	}
-
-	q.vms = map[string]vm.VM{
-		vm.JS: vm.New(vm.JS),
-	}
-	q.vms[vm.JS].Initialize()
-
-	q.Log = q.Config.Logger
 
 	return nil
 }
