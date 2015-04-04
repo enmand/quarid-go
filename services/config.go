@@ -61,7 +61,7 @@ func NewConfig(configFilePath string) (*Config, error) {
 		config.Timezone = time.UTC
 	}
 
-	config.Logger.Printf("Using timezone: '%s'\n", config.Timezone.String())
+	config.Logger.Printf("Using timezone: '%s'", config.Timezone.String())
 
 	return &config, nil
 }
