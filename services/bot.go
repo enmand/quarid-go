@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/thoj/go-ircevent"
+	"github.com/enmand/go-ircevent"
 )
 
 type Bot interface {

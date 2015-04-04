@@ -8,7 +8,7 @@ import (
 	"github.com/enmand/quarid-go/vm"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/thoj/go-ircevent"
+	"github.com/enmand/go-ircevent"
 )
 
 type quarid struct {

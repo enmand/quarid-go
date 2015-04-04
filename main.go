@@ -6,7 +6,6 @@ import (
 	"github.com/enmand/quarid-go/services"
 
 	"github.com/alecthomas/kingpin"
-	"github.com/thoj/go-ircevent"
 )
 
 const VERSION = "0.1"

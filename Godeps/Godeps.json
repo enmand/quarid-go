@@ -21,8 +21,8 @@
 			"Rev": "c2346f4ada7cdbda7f3523c87d986c91d4677b98"
 		},
 		{
-			"ImportPath": "github.com/thoj/go-ircevent",
-			"Rev": "5e6704d8956eeba81a2cbac9ba73bd609da39d0f"
+			"ImportPath": "github.com/enmand/go-ircevent",
+			"Rev": "3d166d677d3dfb26a8f79f8d015d8318a6065a44"
 		},
 		{
 			"ImportPath": "gopkg.in/vmihailenco/msgpack.v2",
