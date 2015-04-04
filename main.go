@@ -14,12 +14,6 @@ var (
 	).Required().String()
 )
 
-type Message struct {
-	*irc.Event
-
-	Room string
-}
-
 func main() {
 	kingpin.Version(services.VERSION)
 	kingpin.Parse()
