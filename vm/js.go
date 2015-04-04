@@ -56,7 +56,6 @@ func (v *js) Run(name string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("Could not convert return to response: %s", err)
 	}
-	fmt.Printf(ret)
 
 	return ret, nil
 }
