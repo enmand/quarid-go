@@ -7,8 +7,6 @@ import (
 	"github.com/alecthomas/kingpin"
 )
 
-const VERSION = "0.1"
-
 var (
 	configFile = kingpin.Flag(
 		"config",
@@ -23,7 +21,7 @@ type Message struct {
 }
 
 func main() {
-	kingpin.Version(VERSION)
+	kingpin.Version(services.VERSION)
 	kingpin.Parse()
 
 	var err error
