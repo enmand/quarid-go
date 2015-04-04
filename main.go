@@ -1,10 +1,9 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/enmand/quarid-go/services"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/alecthomas/kingpin"
 )
 
@@ -30,7 +29,7 @@ func main() {
 	var err error
 	config, err := services.NewConfig(*configFile)
 	if err != nil {
-		fmt.Printf("Could not load configuration: %s\n", err)
+		log.Errorf("Could not load configuration: %s\n", err)
 		return
 	}
 
@@ -39,5 +38,10 @@ func main() {
 	bot.Connect()
 	defer bot.Disconnect()
 
-	bot.Connection.Loop()
+	ch, errCh := bot.Connection.Loop()
+	go func(e chan error) {
+		log.Errorf("Got an error: %s", <-e)
+	}(errCh)
+
+	<-ch
 }
