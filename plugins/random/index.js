@@ -1,4 +1,4 @@
-db = require('database')
+db = require('database');
 
 function main() {
 	return db;
