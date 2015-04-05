@@ -104,6 +104,10 @@ func (q *quarid) Plugins() []Plugin {
 	return q.plugins
 }
 
+func (q *quarid) VMs() map[string]vm.VM {
+	return q.vms
+}
+
 func (q *quarid) Debugf(s string, f ...interface{}) {
 	log.Debugf(s, f)
 }

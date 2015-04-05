@@ -5,6 +5,7 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/enmand/go-ircevent"
+	"github.com/enmand/quarid-go/vm"
 )
 
 type Bot interface {
@@ -28,6 +29,9 @@ type Bot interface {
 
 	// Return a map of initialzed virtual machines for this bot
 	Plugins() []Plugin
+
+	// A list of VMs that the bot has available
+	VMs() map[string]vm.VM
 }
 
 func NewBot(cfg *Config) *quarid {
