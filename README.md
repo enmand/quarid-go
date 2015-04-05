@@ -1,5 +1,7 @@
 # guarid-go
 
+[![Build Status](https://drone.io/github.com/enmand/quarid-go/status.png)](https://drone.io/github.com/enmand/quarid-go/latest)
+
 ## Quick Start  ##
 ### To install: ###
 
