@@ -23,8 +23,8 @@ func NewPlugin(name, path string) *plugin {
 }
 
 type plugin struct {
-	path string
-	vm   vm.VM
+	path string `json:"-"`
+	vm   vm.VM  `json:"-"`
 
 	Name          string      `json:"name"`
 	VM            string      `json:"vm"`
@@ -33,7 +33,7 @@ type plugin struct {
 }
 
 func (p *plugin) Load(b Bot) error {
-	pp, err := p.pluginConfig()
+	pp, err := p.pluginConfig(b)
 	if err != nil {
 		return err
 	}
@@ -44,7 +44,7 @@ func (p *plugin) Load(b Bot) error {
 }
 
 // Load JSON-based plugin configuration from plugin.json
-func (p *plugin) pluginConfig() (Plugin, error) {
+func (p *plugin) pluginConfig(b Bot) (Plugin, error) {
 	cf := fmt.Sprintf("%s/plugin.json", p.path)
 
 	cb, err := ioutil.ReadFile(cf)
@@ -52,7 +52,7 @@ func (p *plugin) pluginConfig() (Plugin, error) {
 		return nil, fmt.Errorf("Cannot load plugin '%s': %s", p.Name, err)
 	}
 
-	var pp Plugin
+	pp := &plugin{}
 	err = json.Unmarshal(cb, pp)
 	if err != nil {
 		return nil, fmt.Errorf(
@@ -62,17 +62,33 @@ func (p *plugin) pluginConfig() (Plugin, error) {
 		)
 	}
 
-	if p.Name != pp.(*plugin).Name {
+	if p.Name != pp.Name {
 		log.Warningf(`
 			Sanity check! %s has a different name than it was configured
 			for ('%s')
-		`, p.Name, pp.(*plugin).Name)
+		`, p.Name, pp.Name)
 	}
 
-	return pp, err
+	vs := b.VMs()
+	if vm, ok := vs[pp.VM]; !ok {
+		return nil, fmt.Errorf("The VM '%s' is not available", p.VM)
+	} else {
+		p.vm = vm
+	}
+
+	return pp, nil
 }
 
 // Compile our plugin, using the VM given
 func (p *plugin) compile() error {
+	m, err := ioutil.ReadFile(fmt.Sprintf("%s/%s", p.path, p.Main))
+	if err != nil {
+		return err
+	}
+	_, err = p.vm.LoadScript(p.Name, string(m))
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
