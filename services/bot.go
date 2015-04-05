@@ -27,7 +27,7 @@ type Bot interface {
 	// Clear all callbacks
 	ClearCallback(event string) bool
 
-	// Return a map of initialzed virtual machines for this bot
+	// Return a map of initialzed Plugins for this bot
 	Plugins() []Plugin
 
 	// A list of VMs that the bot has available
