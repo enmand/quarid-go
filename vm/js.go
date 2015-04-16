@@ -3,33 +3,31 @@ package vm
 import (
 	"fmt"
 
-	log "github.com/Sirupsen/logrus"
+	"github.com/enmand/quarid-go/vm/js"
 	"github.com/robertkrimen/otto"
 	_ "github.com/robertkrimen/otto/underscore"
 )
 
-type js struct {
+type vm struct {
 	vm      *otto.Otto
 	modules map[string]Runnable
 }
 
-type jsHandler struct {
-	Name     string
-	Function func(call otto.FunctionCall) otto.Value
-}
-
-func newJsVm() *js {
-	return &js{
+func newJsVm() *vm {
+	return &vm{
 		vm: otto.New(),
 	}
 }
 
-func (v *js) Initialize() error {
+func (v *vm) Initialize() error {
 	v.modules = make(map[string]Runnable)
+
+	v.vm.Set("require", js.Require)
+
 	return nil
 }
 
-func (v *js) LoadScript(name string, source string) (Runnable, error) {
+func (v *vm) LoadScript(name string, source string) (Runnable, error) {
 	if _, ok := v.modules[name]; ok {
 		return nil, fmt.Errorf("Plugin named %s already exists", name)
 	}
@@ -40,11 +38,10 @@ func (v *js) LoadScript(name string, source string) (Runnable, error) {
 	}
 	v.modules[name] = s
 
-	log.Errorf("%#v", s)
 	return s, nil
 }
 
-func (v *js) Run(name string) (string, error) {
+func (v *vm) Run(name string) (string, error) {
 	module := v.modules[name]
 
 	val, err := v.vm.Run(module.(*otto.Script))
