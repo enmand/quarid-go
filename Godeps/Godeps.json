@@ -26,6 +26,10 @@
 			"Rev": "3d166d677d3dfb26a8f79f8d015d8318a6065a44"
 		},
 		{
+			"ImportPath": "github.com/jinzhu/copier",
+			"Rev": "0f5b379f2f7bd17b5e0e06904f6ca386996f9f5a"
+		},
+		{
 			"ImportPath": "github.com/robertkrimen/otto",
 			"Rev": "c2346f4ada7cdbda7f3523c87d986c91d4677b98"
 		}
