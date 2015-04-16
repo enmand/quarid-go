@@ -6,7 +6,8 @@ import (
 	"io/ioutil"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/enmand/quarid-go/vm"
+
+	qvm "github.com/enmand/quarid-go/vm"
 )
 
 type Plugin interface {
@@ -24,7 +25,7 @@ func NewPlugin(name, path string) *plugin {
 
 type plugin struct {
 	path string `json:"-"`
-	vm   vm.VM  `json:"-"`
+	vm   qvm.VM `json:"-"`
 
 	Name          string      `json:"name"`
 	VM            string      `json:"vm"`
@@ -37,8 +38,13 @@ func (p *plugin) Load(b Bot) error {
 	if err != nil {
 		return err
 	}
+
 	p = pp.(*plugin) // Set our plugin configuration our loaded config
 	log.Infof("Loading plugin: %s (in VM: %s)", p.Name, p.VM)
+
+	if err := p.compile(); err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -53,6 +59,8 @@ func (p *plugin) pluginConfig(b Bot) (Plugin, error) {
 	}
 
 	pp := &plugin{}
+	pp.path = p.path
+
 	err = json.Unmarshal(cb, pp)
 	if err != nil {
 		return nil, fmt.Errorf(
@@ -70,10 +78,10 @@ func (p *plugin) pluginConfig(b Bot) (Plugin, error) {
 	}
 
 	vs := b.VMs()
-	if vm, ok := vs[pp.VM]; !ok {
+	if v, ok := vs[pp.VM]; !ok {
 		return nil, fmt.Errorf("The VM '%s' is not available", p.VM)
 	} else {
-		p.vm = vm
+		pp.vm = v
 	}
 
 	return pp, nil
@@ -85,7 +93,13 @@ func (p *plugin) compile() error {
 	if err != nil {
 		return err
 	}
+
 	_, err = p.vm.LoadScript(p.Name, string(m))
+	if err != nil {
+		return err
+	}
+
+	_, err = p.vm.Run(p.Name)
 	if err != nil {
 		return err
 	}
