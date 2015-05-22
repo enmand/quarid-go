@@ -1,4 +1,4 @@
-package services
+package logger
 
 import (
 	"io"
@@ -7,19 +7,19 @@ import (
 	log "github.com/Sirupsen/logrus"
 )
 
-type logType struct {
+type LogType struct {
 	File  string `json:"file"`
 	Level uint   `json:"level"`
 }
 
-func NewLogger(f io.Writer, l logType) *log.Logger {
+func New(f io.Writer, l LogType) *log.Logger {
 	// Configure logger
 	log.SetOutput(f)
 	log.SetLevel(log.Level(l.Level))
 	return log.New() //log.New(logWritter, "", log.LstdFlags)
 }
 
-func logWriter(l logType) (io.Writer, error) {
+func LogWriter(l LogType) (io.Writer, error) {
 	switch l.File {
 	case "stdout":
 		return os.Stdout, nil

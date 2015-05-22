@@ -1,27 +1,14 @@
-package services
+package plugin
 
 import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 
-	log "github.com/Sirupsen/logrus"
-
 	qvm "github.com/enmand/quarid-go/vm"
+
+	log "github.com/Sirupsen/logrus"
 )
-
-type Plugin interface {
-	Load(b Bot) error
-}
-
-func NewPlugin(name, path string) *plugin {
-	p := &plugin{
-		Name: name,
-		path: path,
-	}
-
-	return p
-}
 
 type plugin struct {
 	path string `json:"-"`
@@ -33,8 +20,28 @@ type plugin struct {
 	Configuration interface{} `json:"configuration"`
 }
 
-func (p *plugin) Load(b Bot) error {
-	pp, err := p.pluginConfig(b)
+func (p *plugin) Run() error {
+	_, err := p.vm.Run(p.path)
+	return err
+}
+
+// Compile our plugin, using the VM given
+func (p *plugin) Compile() error {
+	m, err := ioutil.ReadFile(fmt.Sprintf("%s/%s", p.path, p.Main))
+	if err != nil {
+		return err
+	}
+
+	_, err = p.vm.LoadScript(p.path, string(m))
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (p *plugin) Load(vms map[string]qvm.VM) error {
+	pp, err := p.pluginConfig(vms)
 	if err != nil {
 		return err
 	}
@@ -42,7 +49,7 @@ func (p *plugin) Load(b Bot) error {
 	p = pp.(*plugin) // Set our plugin configuration our loaded config
 	log.Infof("Loading plugin: %s (in VM: %s)", p.Name, p.VM)
 
-	if err := p.compile(); err != nil {
+	if err := p.Compile(); err != nil {
 		return err
 	}
 
@@ -50,7 +57,7 @@ func (p *plugin) Load(b Bot) error {
 }
 
 // Load JSON-based plugin configuration from plugin.json
-func (p *plugin) pluginConfig(b Bot) (Plugin, error) {
+func (p *plugin) pluginConfig(vms map[string]qvm.VM) (Plugin, error) {
 	cf := fmt.Sprintf("%s/plugin.json", p.path)
 
 	cb, err := ioutil.ReadFile(cf)
@@ -77,32 +84,11 @@ func (p *plugin) pluginConfig(b Bot) (Plugin, error) {
 		`, p.Name, pp.Name)
 	}
 
-	vs := b.VMs()
-	if v, ok := vs[pp.VM]; !ok {
+	if v, ok := vms[pp.VM]; !ok {
 		return nil, fmt.Errorf("The VM '%s' is not available", p.VM)
 	} else {
 		pp.vm = v
 	}
 
 	return pp, nil
-}
-
-// Compile our plugin, using the VM given
-func (p *plugin) compile() error {
-	m, err := ioutil.ReadFile(fmt.Sprintf("%s/%s", p.path, p.Main))
-	if err != nil {
-		return err
-	}
-
-	_, err = p.vm.LoadScript(p.Name, string(m))
-	if err != nil {
-		return err
-	}
-
-	_, err = p.vm.Run(p.Name)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }

@@ -1,4 +1,4 @@
-package services
+package config
 
 import (
 	"encoding/json"
@@ -7,11 +7,13 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
+
+	"github.com/enmand/quarid-go/services/logger"
 )
 
 type Config struct {
 	Nick         string         `json:"nick"`
-	User         string         `json:"user"`
+	Ident        string         `json:"user"`
 	TimezoneName string         `json:"timezone"`
 	Timezone     *time.Location `json:"-"`
 
@@ -23,14 +25,14 @@ type Config struct {
 	Channels []string `json:"channels"`
 	Admins   []string `json:"admins"`
 
-	Log logType `json:"log"`
+	Log logger.LogType `json:"log"`
 
 	PluginsDirs []string `json:"plugins_dirs"`
 
 	Logger *logrus.Logger `json:"-"`
 }
 
-func NewConfig(configFilePath string) (*Config, error) {
+func New(configFilePath string) (*Config, error) {
 	var configData []byte
 	var config Config
 	var err error
@@ -46,11 +48,11 @@ func NewConfig(configFilePath string) (*Config, error) {
 		return nil, fmt.Errorf("Could not parse JSON: %s", err)
 	}
 
-	w, err := logWriter(config.Log)
+	w, err := logger.LogWriter(config.Log)
 	if err != nil {
 		panic(fmt.Sprintf("Cannot configure log writer: %s", err))
 	}
-	config.Logger = NewLogger(w, config.Log)
+	config.Logger = logger.New(w, config.Log)
 
 	config.Logger.Printf("Loading timezone...")
 	// Load timezone
