@@ -1,28 +1,19 @@
-// IRC client services in Golang
-//
-// This package implements an simple IRC service, that can be used in Golang to
-// build IRC clients, bots, or other tools.
-//
-// Connecting
-// To connect
 package irc
 
 import (
 	"bufio"
-	"bytes"
 	"crypto/tls"
-	"fmt"
 	"net"
 	"net/textproto"
 	"strings"
+	"time"
 )
 
-// Dial a connect to the IRC server. Use the form address:port
-func (i *IRCClient) Connect(server string) error {
+func (i *Client) Connect(server string) error {
 	var err error
 
-	i.events = make(chan *IRCEvent)
-	i.alive = make(chan bool)
+	i.events = make(chan *Event)
+	i.dead = make(chan bool)
 
 	if !i.TLS {
 		i.conn, err = net.DialTimeout("tcp", server, TIMEOUT)
@@ -39,47 +30,29 @@ func (i *IRCClient) Connect(server string) error {
 	return err
 }
 
-func (i *IRCClient) Disconnect() error {
-	err := i.Write(&IRCEvent{
+func (i *Client) Disconnect() error {
+	err := i.Write(&Event{
 		Command: IRC_QUIT,
 	})
 
-	i.alive <- false
-	close(i.alive)
+	i.dead <- false
+	close(i.dead)
 	close(i.events)
 
 	return err
 }
 
-func (i *IRCClient) Write(ev *IRCEvent) error {
-	var payload [][]byte
-
-	payload = append(payload, []byte(ev.Command))
-	for i, p := range ev.Parameters {
-		if i == len(ev.Parameters)-1 && len(ev.Parameters) > 1 {
-			p = fmt.Sprintf(":%s\r\n", p)
-		}
-		payload = append(payload, []byte(p))
-	}
-
-	payload = append(payload, []byte("\r\n"))
-	full := bytes.Join(payload, []byte(" "))
-
-	_, err := i.conn.Write(full)
-	return err
-}
-
-func (i *IRCClient) authenticate() {
+func (i *Client) authenticate() {
 	var err error
 
-	err = i.Write(&IRCEvent{
+	err = i.Write(&Event{
 		Command: IRC_NICK,
 		Parameters: []string{
 			i.Nick,
 		},
 	})
 
-	err = i.Write(&IRCEvent{
+	err = i.Write(&Event{
 		Command: IRC_USER,
 		Parameters: []string{
 			i.Ident,
@@ -95,7 +68,7 @@ func (i *IRCClient) authenticate() {
 	}
 }
 
-func (i *IRCClient) read() {
+func (i *Client) read() {
 	r := bufio.NewReader(i.conn)
 	tp := textproto.NewReader(r)
 
@@ -103,7 +76,7 @@ func (i *IRCClient) read() {
 		l, _ := tp.ReadLine()
 		ws := strings.Split(l, " ")
 
-		ev := &IRCEvent{}
+		ev := &Event{}
 
 		if prefix := ws[0]; prefix[0] == ':' {
 			ev.Prefix = prefix[1:]
@@ -131,24 +104,13 @@ func (i *IRCClient) read() {
 		}
 
 		ev.Parameters = append(ev.Parameters, strings.Join(trailing, " "))
+		ev.Timestamp = time.Now()
+
+		i.events <- ev
 
 		if ev.Command == IRC_PING {
 			ev.Command = IRC_PONG
-			i.Write(ev)
+			go i.Write(ev)
 		}
-
-		i.events <- ev
 	}
-}
-
-func scanEvents(data []byte, eof bool) (int, []byte, error) {
-	if eof {
-		return len(data), data[0:len(data)], nil
-	}
-
-	if i := bytes.Index(data, []byte("\n")); i >= 0 {
-		return i + 2, data[0:i], nil
-	}
-
-	return 0, nil, nil
 }

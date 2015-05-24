@@ -1,3 +1,12 @@
+//
+// IRC client services in Golang
+//
+// About
+//
+// This package implements an simple IRC service, that can be used in Golang to
+// build IRC clients, bots, or other tools.
+//
+// See also: https://tools.ietf.org/html/rfc2812
 package irc
 
 import (
@@ -10,28 +19,20 @@ import (
 const TIMEOUT = 1 * time.Minute
 
 type IRC interface {
-	// Connect to an IRC server,
+	// Connect to an IRC server. Use the form address:port
 	Connect(server string) error
 
 	// Disconnect from an IRC server
 	Disconnect() error
 
-	// Write to the server
-	Write(ev *IRCEvent) error
+	// Loop blocks while reading from the server
+	Loop()
+
+	EventsHandler
+	Responder
 }
 
-type IRCEvent struct {
-	// The event prefix (optional in spec)
-	Prefix string
-
-	// The command that the client (or server) is sending/sent
-	Command string
-
-	// The parameters to the command the client (or server) is sending/sent
-	Parameters []string
-}
-
-type IRCClient struct {
+type Client struct {
 	// The client's nickname on the server
 	Nick string
 
@@ -50,21 +51,21 @@ type IRCClient struct {
 	// Should this client verify the server's SSL certs
 	TLSVerify bool
 
-	// Addresses
-	Addrs map[string]net.Addr
+	// handlers for filtered events
+	handlers []*Handler
 
-	// Alive while the connective is still active
-	alive chan bool
+	// Dead is blocks until the conn
+	dead chan bool
 
 	// Events broadcasted from the server
-	events chan *IRCEvent
+	events chan *Event
 
 	// The network connection this client has to the server
 	conn net.Conn
 }
 
 func NewClient(c *config.Config) IRC {
-	return &IRCClient{
+	return &Client{
 		Nick:      c.Nick,
 		Ident:     c.Ident,
 		TLSVerify: c.TLS.Verify,
