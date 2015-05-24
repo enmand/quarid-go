@@ -11,7 +11,7 @@ import (
 
 type quarid struct {
 	// Connection to the IRC server
-	IRC *irc.IRCClient
+	IRC *irc.Client
 
 	// Configuration from the user
 	Config *config.Config
@@ -26,15 +26,15 @@ type quarid struct {
 	Log *log.Logger
 
 	// The event channel for IRC to use for this bot
-	IRCEventCh chan *irc.IRCEvent
+	IRCEventCh chan *irc.Event
 
 	// Exit flag
 	exit chan bool
 }
 
 func (q *quarid) initialize() error {
-	q.IRC = irc.NewClient(q.Config).(*irc.IRCClient)
-	q.IRCEventCh = make(chan *irc.IRCEvent)
+	q.IRC = irc.NewClient(q.Config).(*irc.Client)
+	q.IRCEventCh = make(chan *irc.Event)
 	q.exit = make(chan bool)
 
 	// Initialize our VMs

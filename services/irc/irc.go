@@ -25,22 +25,17 @@ type IRC interface {
 	// Disconnect from an IRC server
 	Disconnect() error
 
+	// Loop blocks while reading from the server
+	Loop()
+
+	// Handle a portion of events, based on a filter
+	Handle(f Filter, h handleFunc)
+
 	// Write to the server
-	Write(ev *IRCEvent) error
+	Write(ev *Event) error
 }
 
-type IRCEvent struct {
-	// The event prefix (optional in spec)
-	Prefix string
-
-	// The command that the client (or server) is sending/sent
-	Command string
-
-	// The parameters to the command the client (or server) is sending/sent
-	Parameters []string
-}
-
-type IRCClient struct {
+type Client struct {
 	// The client's nickname on the server
 	Nick string
 
@@ -59,21 +54,18 @@ type IRCClient struct {
 	// Should this client verify the server's SSL certs
 	TLSVerify bool
 
-	// Addresses
-	Addrs map[string]net.Addr
-
-	// Alive while the connective is still active
-	alive chan bool
+	// Dead is blocks until the conn
+	dead chan bool
 
 	// Events broadcasted from the server
-	events chan *IRCEvent
+	events chan *Event
 
 	// The network connection this client has to the server
 	conn net.Conn
 }
 
 func NewClient(c *config.Config) IRC {
-	return &IRCClient{
+	return &Client{
 		Nick:      c.Nick,
 		Ident:     c.Ident,
 		TLSVerify: c.TLS.Verify,

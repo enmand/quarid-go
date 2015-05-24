@@ -8,14 +8,15 @@ import (
 	"net"
 	"net/textproto"
 	"strings"
+	"time"
 )
 
 // Dial a connect to the IRC server. Use the form address:port
-func (i *IRCClient) Connect(server string) error {
+func (i *Client) Connect(server string) error {
 	var err error
 
-	i.events = make(chan *IRCEvent)
-	i.alive = make(chan bool)
+	i.events = make(chan *Event)
+	i.dead = make(chan bool)
 
 	if !i.TLS {
 		i.conn, err = net.DialTimeout("tcp", server, TIMEOUT)
@@ -32,19 +33,35 @@ func (i *IRCClient) Connect(server string) error {
 	return err
 }
 
-func (i *IRCClient) Disconnect() error {
-	err := i.Write(&IRCEvent{
+func (i *Client) Disconnect() error {
+	err := i.Write(&Event{
 		Command: IRC_QUIT,
 	})
 
-	i.alive <- false
-	close(i.alive)
+	i.dead <- false
+	close(i.dead)
 	close(i.events)
 
 	return err
 }
 
-func (i *IRCClient) Write(ev *IRCEvent) error {
+func (i *Client) Loop() {
+	go i.read()
+
+	for m := range i.events {
+		if m.Command == IRC_RPL_WELCOME {
+			i.Write(&Event{
+				Command:    IRC_JOIN,
+				Parameters: []string{"#t3st"},
+			})
+		}
+	}
+}
+
+func (i *Client) Handle(f Filter, h handleFunc) {
+}
+
+func (i *Client) Write(ev *Event) error {
 	var payload [][]byte
 
 	payload = append(payload, []byte(ev.Command))
@@ -62,17 +79,17 @@ func (i *IRCClient) Write(ev *IRCEvent) error {
 	return err
 }
 
-func (i *IRCClient) authenticate() {
+func (i *Client) authenticate() {
 	var err error
 
-	err = i.Write(&IRCEvent{
+	err = i.Write(&Event{
 		Command: IRC_NICK,
 		Parameters: []string{
 			i.Nick,
 		},
 	})
 
-	err = i.Write(&IRCEvent{
+	err = i.Write(&Event{
 		Command: IRC_USER,
 		Parameters: []string{
 			i.Ident,
@@ -88,7 +105,7 @@ func (i *IRCClient) authenticate() {
 	}
 }
 
-func (i *IRCClient) read() {
+func (i *Client) read() {
 	r := bufio.NewReader(i.conn)
 	tp := textproto.NewReader(r)
 
@@ -96,7 +113,7 @@ func (i *IRCClient) read() {
 		l, _ := tp.ReadLine()
 		ws := strings.Split(l, " ")
 
-		ev := &IRCEvent{}
+		ev := &Event{}
 
 		if prefix := ws[0]; prefix[0] == ':' {
 			ev.Prefix = prefix[1:]
@@ -124,24 +141,13 @@ func (i *IRCClient) read() {
 		}
 
 		ev.Parameters = append(ev.Parameters, strings.Join(trailing, " "))
+		ev.Timestamp = time.Now()
+
+		i.events <- ev
 
 		if ev.Command == IRC_PING {
 			ev.Command = IRC_PONG
-			i.Write(ev)
+			go i.Write(ev)
 		}
-
-		i.events <- ev
 	}
-}
-
-func scanEvents(data []byte, eof bool) (int, []byte, error) {
-	if eof {
-		return len(data), data[0:len(data)], nil
-	}
-
-	if i := bytes.Index(data, []byte("\n")); i >= 0 {
-		return i + 2, data[0:i], nil
-	}
-
-	return 0, nil, nil
 }
