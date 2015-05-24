@@ -1,14 +1,6 @@
 package vm
 
-type Runnable interface{}
-
-type FunctionCall interface{}
-type Value interface{}
-
-type Handler struct {
-	Name     string
-	Function func(call FunctionCall) Value
-}
+import "github.com/enmand/quarid-go/vm/js"
 
 const (
 	JS = "js"
@@ -23,11 +15,8 @@ const (
 )
 
 type VM interface {
-	// Initialize the virtual machine
-	Initialize() error
-
 	// Load a and "compile" a script into the VM
-	LoadScript(name string, source string) (Runnable, error)
+	LoadScript(name string, source string) (interface{}, error)
 
 	// Run a previously loaded script in the VM
 	Run(name string) (string, error)
@@ -36,7 +25,7 @@ type VM interface {
 func New(typ string) VM {
 	switch typ {
 	case JS:
-		return newJsVm()
+		return js.NewVM()
 	}
 
 	return nil
