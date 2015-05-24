@@ -10,22 +10,28 @@ import (
 )
 
 // Implements require() in the JavaScript VM.
-func Require(call otto.FunctionCall) otto.Value {
+func RequireFunc(call otto.FunctionCall) otto.Value {
+
+	v, _ := call.Otto.Get(_modpath)
+
 	path, _ := call.Argument(0).ToString()
+	fullPath := fmt.Sprintf("%s/%s", v.String(), path)
+
 	if !strings.Contains(path, ".") {
-		return _internalRequire(call, path)
+		return _internalRequire(call, fullPath)
 	} else {
-		return _externalRequire(call, path)
+		return _externalRequire(call, fullPath)
 	}
 }
 
 func _internalRequire(call otto.FunctionCall, path string) otto.Value {
-	requireError(path)
-	return otto.Value{}
+	requireError(path, "internal")
+	return otto.UndefinedValue()
 }
 
 func _externalRequire(call otto.FunctionCall, path string) otto.Value {
 	d, err := ioutil.ReadFile(path)
+
 	if err != nil {
 		// No external module found, let's search our internal path
 		return _internalRequire(call, path)
@@ -33,14 +39,18 @@ func _externalRequire(call otto.FunctionCall, path string) otto.Value {
 
 	_, v, err := otto.Run(d)
 	if err != nil {
-		ef, _ := otto.ToValue(fmt.Errorf("Could not compile module %s", path))
-		return ef
+		requireError(path, "external")
+		return otto.UndefinedValue()
 	}
 
 	return v
 }
 
-func requireError(path string) {
+func requireError(path, requireType string) {
 	_, dbf := Dbg.New()
-	dbf("%/panic//Module '%s' not found", path)
+	dbf(
+		"%/warn//Module '%s' (%s module search) not found, module not loaded",
+		path,
+		requireType,
+	)
 }
