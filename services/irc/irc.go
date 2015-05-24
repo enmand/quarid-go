@@ -51,6 +51,9 @@ type Client struct {
 	// Should this client verify the server's SSL certs
 	TLSVerify bool
 
+	// handlers for filtered events
+	handlers []*Handler
+
 	// Dead is blocks until the conn
 	dead chan bool
 
