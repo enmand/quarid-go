@@ -9,7 +9,6 @@ import (
 	"time"
 )
 
-// Dial a connect to the IRC server. Use the form address:port
 func (i *Client) Connect(server string) error {
 	var err error
 
@@ -41,22 +40,6 @@ func (i *Client) Disconnect() error {
 	close(i.events)
 
 	return err
-}
-
-func (i *Client) Loop() {
-	go i.read()
-
-	for m := range i.events {
-		if m.Command == IRC_RPL_WELCOME {
-			i.Write(&Event{
-				Command:    IRC_JOIN,
-				Parameters: []string{"#t3st"},
-			})
-		}
-	}
-}
-
-func (i *Client) Handle(f Filter, h handleFunc) {
 }
 
 func (i *Client) authenticate() {
