@@ -1,3 +1,12 @@
+//
+// IRC client services in Golang
+//
+// About
+//
+// This package implements an simple IRC service, that can be used in Golang to
+// build IRC clients, bots, or other tools.
+//
+// See also: https://tools.ietf.org/html/rfc2812
 package irc
 
 import (
