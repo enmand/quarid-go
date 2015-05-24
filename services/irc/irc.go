@@ -19,7 +19,7 @@ import (
 const TIMEOUT = 1 * time.Minute
 
 type IRC interface {
-	// Connect to an IRC server,
+	// Connect to an IRC server. Use the form address:port
 	Connect(server string) error
 
 	// Disconnect from an IRC server
@@ -28,11 +28,8 @@ type IRC interface {
 	// Loop blocks while reading from the server
 	Loop()
 
-	// Handle a portion of events, based on a filter
-	Handle(f Filter, h handleFunc)
-
-	// Write to the server
-	Write(ev *Event) error
+	EventsHandler
+	Responder
 }
 
 type Client struct {
