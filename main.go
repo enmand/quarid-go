@@ -1,7 +1,11 @@
 package main
 
 import (
+	"os"
+
 	"github.com/enmand/quarid-go/services"
+	"github.com/enmand/quarid-go/services/bot"
+	"github.com/enmand/quarid-go/services/config"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/alecthomas/kingpin"
@@ -19,21 +23,19 @@ func main() {
 	kingpin.Parse()
 
 	var err error
-	config, err := services.NewConfig(*configFile)
+	config, err := config.New(*configFile)
 	if err != nil {
 		log.Errorf("Could not load configuration: %s\n", err)
 		return
 	}
 
-	bot := services.NewBot(config)
+	q := bot.New(config)
 
-	bot.Connect()
-	defer bot.Disconnect()
-
-	ch, errCh := bot.Connection.Loop()
-	go func(e chan error) {
-		log.Errorf("Got an error: %s", <-e)
-	}(errCh)
-
-	<-ch
+	if err := q.Connect(); err != nil {
+		log.Errorf("%s", err)
+		os.Exit(-1)
+	}
+	defer func() {
+		q.Disconnect()
+	}()
 }
