@@ -1,19 +1,22 @@
+package irc
+
 // Responder
 //
 // Responder responds to the IRC server, by writing an IRC Event to the CLient's
 // connection
-package irc
 
 import (
 	"bytes"
 	"fmt"
 )
 
+// Responder writes an event to the server
 type Responder interface {
 	// Write to the server
 	Write(ev *Event) error
 }
 
+// Write an event to the server, and return an error if it fails
 func (i *Client) Write(ev *Event) error {
 	var payload [][]byte
 
