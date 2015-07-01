@@ -1,8 +1,9 @@
-// Events
+package irc
+
+// IRC Events
 //
 // The events system will coordinate events between reading from the server,
 // and any actions that should be handled for those events, based on a Filter.
-package irc
 
 import (
 	"time"
@@ -10,13 +11,14 @@ import (
 	log "github.com/Sirupsen/logrus"
 )
 
+// EventsHandler preforms actions for incoming events, based on a filter, or
+// set of filters
 type EventsHandler interface {
 	// Handle a portion of events, based on a filter
 	Handle(f []Filter, h HandlerFunc)
 }
 
-// Responder holds a connection, and can be used to write to the server
-// Events are are read from the IRC server
+// Event represents a single events read from the IRC server
 type Event struct {
 	// The event prefix (optional in spec)
 	Prefix string
@@ -31,8 +33,8 @@ type Event struct {
 	Timestamp time.Time
 }
 
-// HandlerFuncs are given the event to handle, and a client to interact with the
-// server with
+// HandlerFunc preforms some action, based on the Event given, and respsonds
+// using the Responder c
 type HandlerFunc func(ev *Event, c Responder)
 
 // Handler filters events to be acted on by a HandlerFunc
@@ -41,6 +43,7 @@ type Handler struct {
 	h  HandlerFunc
 }
 
+// Loop reads the data from the server, and handles events that happen
 func (i *Client) Loop() {
 	go i.read()
 
@@ -51,6 +54,9 @@ func (i *Client) Loop() {
 	<-i.dead
 }
 
+// Handle defines events that should be filtered to preform a handler function.
+// Using "*" or "" for a filter, will cause all events to be passed to the
+// HandlerFunc.
 func (i *Client) Handle(fs []Filter, hf HandlerFunc) {
 	h := &Handler{
 		fs: fs,
