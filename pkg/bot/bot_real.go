@@ -8,6 +8,7 @@ import (
 	"github.com/enmand/quarid-go/pkg/irc"
 	"github.com/enmand/quarid-go/pkg/plugin"
 	"github.com/enmand/quarid-go/vm"
+	"github.com/enmand/quarid-go/vm/js"
 
 	log "github.com/Sirupsen/logrus"
 )
@@ -31,7 +32,7 @@ func (q *quarid) initialize() error {
 
 	// Initialize our VMs
 	q.vms = map[string]vm.VM{
-		vm.JS: vm.New(vm.JS),
+		vm.JS: js.NewVM(),
 	}
 
 	var errs []error

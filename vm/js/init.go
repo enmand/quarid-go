@@ -3,19 +3,21 @@ package js
 import (
 	"fmt"
 
+	"github.com/enmand/quarid-go/vm"
 	"github.com/robertkrimen/otto"
-	_ "github.com/robertkrimen/otto/underscore"
+	_ "github.com/robertkrimen/otto/underscore" // underscorejs for otto
 )
 
 const _modpath = "__modpath_%s___jsvm"
 
-type vm struct {
+type jsvm struct {
 	vm      *otto.Otto
 	modules map[string]interface{}
 }
 
-func NewVM() *vm {
-	v := &vm{
+// NewVM returns a new Otto-based JavaScript virtual machine
+func NewVM() vm.VM {
+	v := &jsvm{
 		vm: otto.New(),
 	}
 
@@ -24,15 +26,11 @@ func NewVM() *vm {
 	return v
 }
 
-func (v *vm) initialize() error {
-	v.modules = make(map[string]interface{})
-
-	v.vm.Set("require", RequireFunc)
-
-	return nil
+func (v *jsvm) Type() string {
+	return vm.JS
 }
 
-func (v *vm) LoadScript(path string, source string) (interface{}, error) {
+func (v *jsvm) LoadScript(path string, source string) (interface{}, error) {
 	if _, ok := v.modules[path]; ok {
 		return nil, fmt.Errorf("Plugin named %s already exists", path)
 	}
@@ -46,7 +44,7 @@ func (v *vm) LoadScript(path string, source string) (interface{}, error) {
 	return s, nil
 }
 
-func (v *vm) Run(path string) (string, error) {
+func (v *jsvm) Run(path string) (string, error) {
 	module := v.modules[path]
 
 	v.vm.Set(_modpath, path)
@@ -62,4 +60,12 @@ func (v *vm) Run(path string) (string, error) {
 	}
 
 	return ret, nil
+}
+
+func (v *jsvm) initialize() error {
+	v.modules = make(map[string]interface{})
+
+	v.vm.Set("require", RequireFunc)
+
+	return nil
 }

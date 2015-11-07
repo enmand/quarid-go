@@ -1,32 +1,33 @@
 package vm
 
-import "github.com/enmand/quarid-go/vm/js"
-
 const (
+	// JS is the JavaScript VM
 	JS = "js"
 
 	// TODO
-	JSv8    = "jsv8"
-	PY      = "py"
-	LUA     = "lua"
-	PROLOG  = "prolog"
-	PHP     = "php"
+	// PY is the Python VM
+	PY = "py"
+	// LUA is the Lua VM
+	LUA = "lua"
+
+	// PROLOG is the Prolog VM
+	PROLOG = "prolog"
+
+	// PHP is the PHP VM
+	PHP = "php"
+
+	// Haskell is the Haskell VM
 	HASKELL = "haskell"
 )
 
+// A VM is a language-based virtual machine for running loading, and
+// running code
 type VM interface {
 	// Load a and "compile" a script into the VM
 	LoadScript(name string, source string) (interface{}, error)
 
 	// Run a previously loaded script in the VM
 	Run(name string) (string, error)
-}
 
-func New(typ string) VM {
-	switch typ {
-	case JS:
-		return js.NewVM()
-	}
-
-	return nil
+	Type() string
 }
