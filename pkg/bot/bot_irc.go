@@ -98,7 +98,7 @@ func (q *quarid) Connect() error {
 	)
 
 	q.IRC.Handle(
-		[]adapter.Filter{irc.CommandFilter{Command: irc.IRC_RPL_MOTD}},
+		[]adapter.Filter{irc.CommandFilter{Command: irc.IRC_RPL_MYINFO}},
 		q.joinChan,
 	)
 
