@@ -52,6 +52,6 @@ func init() {
 }
 
 // Get returns the global configuration object
-func Get() *viper.Viper {
-	return config
+func Get() Config {
+	return Config{config}
 }
