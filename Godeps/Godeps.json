@@ -22,10 +22,6 @@
 			"Rev": "4d30731e9122988d2012a9574c43f80f054a0d3b"
 		},
 		{
-			"ImportPath": "github.com/enmand/go-ircevent",
-			"Rev": "3d166d677d3dfb26a8f79f8d015d8318a6065a44"
-		},
-		{
 			"ImportPath": "github.com/jinzhu/copier",
 			"Rev": "0f5b379f2f7bd17b5e0e06904f6ca386996f9f5a"
 		},
