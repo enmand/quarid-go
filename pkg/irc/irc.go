@@ -13,7 +13,6 @@ import (
 	"time"
 
 	"github.com/enmand/quarid-go/pkg/adapter"
-	"github.com/enmand/quarid-go/pkg/config"
 )
 
 // TIMEOUT is the connection timeout to the IRC server
@@ -68,11 +67,11 @@ type Client struct {
 }
 
 // NewClient returns a new IRC client
-func NewClient(c *config.Config) IRC {
+func NewClient(nick, ident string, tlsverify, tls bool) *Client {
 	return &Client{
-		Nick:      c.GetString("nick"),
-		Ident:     c.GetString("ident"),
-		TLSVerify: c.GetBool("tls.verify"),
-		TLS:       c.GetBool("tls.enable"),
+		Nick:      nick,
+		Ident:     ident,
+		TLSVerify: tlsverify,
+		TLS:       tls,
 	}
 }
