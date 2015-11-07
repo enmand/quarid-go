@@ -3,8 +3,8 @@ package bot
 import (
 	"fmt"
 
-	"github.com/enmand/quarid-go/services/config"
-	"github.com/enmand/quarid-go/services/plugin"
+	"github.com/enmand/quarid-go/pkg/config"
+	"github.com/enmand/quarid-go/pkg/plugin"
 	"github.com/enmand/quarid-go/vm"
 )
 

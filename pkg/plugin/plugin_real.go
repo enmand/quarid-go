@@ -14,9 +14,10 @@ type plugin struct {
 	path string `json:"-"`
 	vm   qvm.VM `json:"-"`
 
-	Name          string      `json:"name"`
-	VM            string      `json:"vm"`
-	Main          string      `json:"main"`
+	Name string `json:"name"`
+	VM   string `json:"vm"`
+	Main string `json:"main"`
+
 	Configuration interface{} `json:"configuration"`
 }
 

@@ -8,16 +8,12 @@ package irc
 import (
 	"bytes"
 	"fmt"
+
+	"github.com/enmand/quarid-go/pkg/adapter"
 )
 
-// Responder writes an event to the server
-type Responder interface {
-	// Write to the server
-	Write(ev *Event) error
-}
-
 // Write an event to the server, and return an error if it fails
-func (i *Client) Write(ev *Event) error {
+func (i *Client) Write(ev *adapter.Event) error {
 	var payload [][]byte
 
 	payload = append(payload, []byte(ev.Command))

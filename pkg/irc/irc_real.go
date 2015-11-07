@@ -7,12 +7,15 @@ import (
 	"net/textproto"
 	"strings"
 	"time"
+
+	"github.com/enmand/quarid-go/pkg/adapter"
 )
 
+// Connect connects this client to the server given
 func (i *Client) Connect(server string) error {
 	var err error
 
-	i.events = make(chan *Event)
+	i.events = make(chan *adapter.Event)
 	i.dead = make(chan bool)
 
 	if !i.TLS {
@@ -30,8 +33,9 @@ func (i *Client) Connect(server string) error {
 	return err
 }
 
+// Disconnect disconnects this client from the server it's connected to
 func (i *Client) Disconnect() error {
-	err := i.Write(&Event{
+	err := i.Write(&adapter.Event{
 		Command: IRC_QUIT,
 	})
 
@@ -45,14 +49,14 @@ func (i *Client) Disconnect() error {
 func (i *Client) authenticate() {
 	var err error
 
-	err = i.Write(&Event{
+	err = i.Write(&adapter.Event{
 		Command: IRC_NICK,
 		Parameters: []string{
 			i.Nick,
 		},
 	})
 
-	err = i.Write(&Event{
+	err = i.Write(&adapter.Event{
 		Command: IRC_USER,
 		Parameters: []string{
 			i.Ident,
@@ -76,7 +80,7 @@ func (i *Client) read() {
 		l, _ := tp.ReadLine()
 		ws := strings.Split(l, " ")
 
-		ev := &Event{}
+		ev := &adapter.Event{}
 
 		if prefix := ws[0]; prefix[0] == ':' {
 			ev.Prefix = prefix[1:]

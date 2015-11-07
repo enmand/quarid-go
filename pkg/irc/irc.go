@@ -1,5 +1,4 @@
-//
-// IRC client services in Golang
+// Package irc provides IRC client services in Golang
 //
 // About
 //
@@ -13,11 +12,14 @@ import (
 	"net"
 	"time"
 
-	"github.com/enmand/quarid-go/services/config"
+	"github.com/enmand/quarid-go/pkg/adapter"
+	"github.com/enmand/quarid-go/pkg/config"
 )
 
+// TIMEOUT is the connection timeout to the IRC server
 const TIMEOUT = 1 * time.Minute
 
+// IRC is the IRC client interface
 type IRC interface {
 	// Connect to an IRC server. Use the form address:port
 	Connect(server string) error
@@ -28,10 +30,11 @@ type IRC interface {
 	// Loop blocks while reading from the server
 	Loop()
 
-	EventsHandler
-	Responder
+	adapter.EventsHandler
+	adapter.Responder
 }
 
+// Client is the implementation of the IRC interface
 type Client struct {
 	// The client's nickname on the server
 	Nick string
@@ -52,23 +55,24 @@ type Client struct {
 	TLSVerify bool
 
 	// handlers for filtered events
-	handlers []*Handler
+	handlers []*adapter.Handler
 
 	// Dead is blocks until the conn
 	dead chan bool
 
 	// Events broadcasted from the server
-	events chan *Event
+	events chan *adapter.Event
 
 	// The network connection this client has to the server
 	conn net.Conn
 }
 
+// NewClient returns a new IRC client
 func NewClient(c *config.Config) IRC {
 	return &Client{
-		Nick:      c.Nick,
-		Ident:     c.Ident,
-		TLSVerify: c.TLS.Verify,
-		TLS:       c.TLS.Enable,
+		Nick:      c.GetString("nick"),
+		Ident:     c.GetString("ident"),
+		TLSVerify: c.GetBool("tls.verify"),
+		TLS:       c.GetBool("tls.enable"),
 	}
 }

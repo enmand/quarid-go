@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/enmand/quarid-go/services/config"
-	"github.com/enmand/quarid-go/services/irc"
-	"github.com/enmand/quarid-go/services/plugin"
+	"github.com/enmand/quarid-go/pkg/config"
+	"github.com/enmand/quarid-go/pkg/irc"
+	"github.com/enmand/quarid-go/pkg/plugin"
 	"github.com/enmand/quarid-go/vm"
 
 	log "github.com/Sirupsen/logrus"
