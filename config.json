@@ -1,21 +1,29 @@
 {
-	"nick": "Quarid",
-	"user": "quarid",
-	"timezone": "America\/New_York",
-
-	"server": "irc.unerror.com:6697",
-	"tls": {
-		"verify": false,
-		"enable": true
-	},
-	"channels": ["#t3st"],
-	"admins": ["enmand", "orcam"],
-
+	"listen": ":8080",
+	"timezone": "America/New_York",
 	"log": {
-		"file": "stdout",
+		"file": "quarid.log",
 		"level": 5,
 		"//": "See (github.com/sirupsen/logrus).Level for 'level' value"
 	},
 
-	"plugins_dirs": ["plugins"]
+	"database": "postgres://quarid:quarid@192.168.99.100/quarid?sslmode=disable",
+
+	"vm": {
+		"database": "boltdb://./crates/"
+	},
+
+	"irc": {
+		"nick": "Quarid",
+		"user": "quarid",
+
+		"server": "irc.unerror.com:6667",
+		"tls": {
+			"verify": false,
+			"enable": false
+		},
+		"channels": ["#offtopic"],
+		"admins": ["enmand", "orcam"],
+		"plugins_dirs": ["plugins"]
+	}
 }
