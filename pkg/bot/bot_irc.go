@@ -7,12 +7,11 @@ import (
 	"github.com/enmand/quarid-go/pkg/adapter"
 	"github.com/enmand/quarid-go/pkg/config"
 	"github.com/enmand/quarid-go/pkg/irc"
+	"github.com/enmand/quarid-go/pkg/logger"
 	"github.com/enmand/quarid-go/pkg/plugin"
 	"github.com/enmand/quarid-go/vm"
 	"github.com/enmand/quarid-go/vm/js"
 	"github.com/renstrom/shortuuid"
-
-	log "github.com/Sirupsen/logrus"
 )
 
 type quarid struct {
@@ -45,13 +44,13 @@ func (q *quarid) initialize() error {
 	var errs []error
 	q.plugins, errs = q.LoadPlugins(q.Config.GetStringSlice("plugins_dirs"))
 	if errs != nil {
-		log.Warningf(
+		logger.Log.Warningf(
 			"Some plugins failed to load. The following are loaded: %q",
 			q.plugins,
 		)
-		log.Warningf("But the follow errors occurred:")
+		logger.Log.Warningf("But the follow errors occurred:")
 		for _, e := range errs {
-			log.Warning(e)
+			logger.Log.Warning(e)
 		}
 	}
 
