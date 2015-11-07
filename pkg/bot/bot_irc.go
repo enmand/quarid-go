@@ -89,6 +89,9 @@ func (q *quarid) LoadPlugins(dirs []string) ([]plugin.Plugin, []error) {
 
 func (q *quarid) Connect() error {
 	err := q.IRC.Connect(q.Config.GetString("irc.server"))
+	if err != nil {
+		return err
+	}
 
 	q.IRC.Handle(
 		[]adapter.Filter{irc.CommandFilter{Command: irc.IRC_ERR_NICKNAMEINUSE}},

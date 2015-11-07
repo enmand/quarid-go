@@ -1,12 +1,9 @@
 package irc
 
 import (
-	"bufio"
 	"crypto/tls"
+	"fmt"
 	"net"
-	"net/textproto"
-	"strings"
-	"time"
 
 	"github.com/enmand/quarid-go/pkg/adapter"
 	"github.com/enmand/quarid-go/pkg/logger"
@@ -28,8 +25,11 @@ func (i *Client) Connect(server string) error {
 			InsecureSkipVerify: i.TLSVerify,
 		})
 	}
+	if err != nil {
+		return fmt.Errorf("Could not connect to server: %s", err)
+	}
 
-	logger.Log.Infof("Connected to %s", server)
+	logger.Log.Infof("Connecting to %s", server)
 
 	go i.authenticate()
 
