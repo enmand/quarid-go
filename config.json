@@ -9,6 +9,7 @@
 
 	"database": "postgres://quarid:quarid@192.168.99.100/quarid?sslmode=disable",
 
+	"plugins_dirs": ["plugins"],
 	"vm": {
 		"database": "boltdb://./crates/"
 	},
@@ -23,7 +24,6 @@
 			"enable": false
 		},
 		"channels": ["#offtopic"],
-		"admins": ["enmand", "orcam"],
-		"plugins_dirs": ["plugins"]
+		"admins": ["enmand", "orcam"]
 	}
 }
