@@ -8,6 +8,7 @@ import (
 	"github.com/enmand/quarid-go/vm"
 )
 
+// Bot can connect to a service and forward events
 type Bot interface {
 	// Load all of the plugins in each `dir`
 	LoadPlugins(dir []string) ([]plugin.Plugin, []error)
@@ -25,6 +26,7 @@ type Bot interface {
 	VMs() map[string]vm.VM
 }
 
+// New returns a new instance of a Bot
 func New(cfg *config.Config) *quarid {
 	bot := &quarid{
 		Config: cfg,
