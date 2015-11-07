@@ -60,13 +60,13 @@ func (i *Client) authenticate() {
 		},
 	})
 
+	// RFC 2812 USER command
 	err = i.Write(&adapter.Event{
 		Command: IRC_USER,
 		Parameters: []string{
 			i.Ident,
-			"0.0.0.0",
-			"0.0.0.0",
-			i.Ident,
+			"0",
+			"*",
 			i.Nick,
 		},
 	})
