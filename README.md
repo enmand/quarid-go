@@ -28,11 +28,6 @@ configured for your shell. You should also update your `$PATH` to include
 If you don't want to install `Quarid` in the above way for a binary `quarid-go`
 binary in `$GOPATH/bin`, you can see the *Hacking* section to find out more.
 
-## Hacking
-
-Quarid is a flexible IRC bot, built using a Go IRC framework called 
-[go-ircevent](https://github.com/thoj/go-ircevent).
-
 ### Check out repository
 
 	mkdir -p $GOPATH/src/bitbucket.org/enmand/
