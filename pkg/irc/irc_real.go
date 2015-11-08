@@ -38,9 +38,13 @@ func (i *Client) Connect(server string) error {
 
 // Disconnect disconnects this client from the server it's connected to
 func (i *Client) Disconnect() error {
-	err := i.Write(&adapter.Event{
+	var err error
+
+	err = i.Write(&adapter.Event{
 		Command: IRC_QUIT,
 	})
+
+	err = i.conn.Close()
 
 	i.dead <- false
 	close(i.dead)
