@@ -11,7 +11,6 @@ import (
 	"github.com/enmand/quarid-go/pkg/plugin"
 	"github.com/enmand/quarid-go/vm"
 	"github.com/enmand/quarid-go/vm/js"
-	"github.com/renstrom/shortuuid"
 )
 
 type quarid struct {
