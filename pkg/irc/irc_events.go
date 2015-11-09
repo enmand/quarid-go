@@ -127,7 +127,7 @@ func readParams(ws []string, index int) []string {
 
 	for i, p := range ws[index:wsSize] {
 		if len(p) > 0 && p[0] == ':' {
-			params = append(params, strings.Join(ws[i:wsSize], " "))
+			params = append(params, strings.Join(ws[index+i:wsSize], " "))
 			break
 		} else {
 			params = append(params, p)
