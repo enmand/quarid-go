@@ -68,10 +68,20 @@ type Client struct {
 
 // NewClient returns a new IRC client
 func NewClient(nick, ident string, tlsverify, tls bool) *Client {
-	return &Client{
+	c := &Client{
 		Nick:      nick,
 		Ident:     ident,
 		TLSVerify: tlsverify,
 		TLS:       tls,
 	}
+
+	c.Handle(
+		[]adapter.Filter{CommandFilter{Command: IRC_PING}},
+		func(ev *adapter.Event, c adapter.Responder) {
+			ev.Command = IRC_PONG
+			c.Write(ev)
+		},
+	)
+
+	return c
 }
