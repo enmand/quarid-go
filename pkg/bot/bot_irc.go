@@ -92,10 +92,6 @@ func (q *quarid) Connect() error {
 		return err
 	}
 
-	q.IRC.Handle(
-		[]adapter.Filter{irc.CommandFilter{Command: irc.IRC_ERR_NICKNAMEINUSE}},
-		q.fixNick,
-	)
 
 	q.IRC.Handle(
 		[]adapter.Filter{irc.CommandFilter{Command: irc.IRC_RPL_MYINFO}},
@@ -117,25 +113,6 @@ func (q *quarid) Plugins() []plugin.Plugin {
 
 func (q *quarid) VMs() map[string]vm.VM {
 	return q.vms
-}
-
-func (q *quarid) fixNick(
-	ev *adapter.Event,
-	c adapter.Responder,
-) {
-	nick := q.IRC.Nick
-	uniq := shortuuid.UUID()
-
-	newNick := fmt.Sprintf("%s_%s", nick, uniq)
-
-	fixnickCmd := &adapter.Event{
-		Command:    irc.IRC_NICK,
-		Parameters: []string{newNick},
-	}
-
-	if err := c.Write(fixnickCmd); err == nil {
-		q.IRC.Nick = newNick
-	}
 }
 
 func (q *quarid) joinChan(

@@ -83,5 +83,27 @@ func NewClient(nick, ident string, tlsverify, tls bool) *Client {
 		},
 	)
 
+	c.Handle(
+		[]adapter.Filter{CommandFilter{Command: IRC_ERR_NICKNAMEINUSE}},
+		c.fixNick,
+	)
+
 	return c
+}
+
+func (i *Client) fixNick(
+	ev *adapter.Event,
+	c adapter.Responder,
+) {
+	nick := i.Nick
+	uniq := shortuuid.UUID()
+
+	newNick := fmt.Sprintf("%s_%s", nick, uniq)
+	i.Nick = newNick[:9] // minimum max length in 9
+
+	logger.Log.Debugf("Fixing nick to %s", i.Nick)
+
+	i.disconnect()
+	i.connect()
+	i.authenticate(ev, i)
 }
