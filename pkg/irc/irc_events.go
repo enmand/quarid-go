@@ -51,49 +51,76 @@ func (i *Client) handleEvent(ev *adapter.Event) {
 	}
 }
 
-func (i *Client) read() {
+// read n lines from the server. if n is 0, continue reading until we can't
+func (i *Client) read(n int) {
 	r := bufio.NewReader(i.conn)
 	tp := textproto.NewReader(r)
 
-	for {
-		l, _ := tp.ReadLine()
-		ws := strings.Split(l, " ")
-
-		ev := &adapter.Event{}
-
-		if prefix := ws[0]; prefix[0] == ':' {
-			ev.Prefix = prefix[1:]
-		} else {
-			ev.Prefix = ""
-			ev.Command = prefix
-		}
-
-		trailingIndex := 1
-		if ev.Prefix != "" {
-			trailingIndex = 2
-			ev.Command = ws[1]
-		}
-
-		var trailing []string
-		for _, param := range ws[trailingIndex:len(ws)] {
-			if len(param) > 0 && (param[0] == ':' || len(trailing) > 0) {
-				if param[0] == ':' {
-					param = param[1:]
-				}
-				trailing = append(trailing, param)
-			} else if len(trailing) == 0 {
-				ev.Parameters = append(ev.Parameters, param)
+	for current := 0; n == 0 || current < n; current++ {
+		l, err := tp.ReadLine()
+		switch err {
+		case io.EOF:
+			logger.Log.Debugf("Read EOF after %d lines", current-1)
+			break
+		case nil:
+			ev, err := parseLine(l)
+			if err != nil {
+				logger.Log.Errorf(err.Error())
+				continue
 			}
-		}
-
-		ev.Parameters = append(ev.Parameters, strings.Join(trailing, " "))
-		ev.Timestamp = time.Now()
-
-		i.events <- ev
-
-		if ev.Command == IRC_PING {
-			ev.Command = IRC_PONG
-			go i.Write(ev)
+			i.events <- ev
+		default:
+			logger.Log.Errorf("Error reading from server... passing: %s", err)
+			break
 		}
 	}
+}
+
+// parseLine read from the IRC server
+func parseLine(l string) (*adapter.Event, error) {
+	ev := &adapter.Event{}
+	ws := strings.Split(l, " ") // split args on " "
+	var paramIndex int          // the argument index where the parameters are
+
+	// Make sure we have at least two params (PREFIX and COMMAND)
+	if len(ws) < 1 {
+		return nil, fmt.Errorf(InvalidLineSize, len(ws), 2)
+	}
+
+	// Check if our "prefix" has ":"
+	if ws[0][0] == ':' {
+		// Server sent a prefix
+		ev.Prefix = ws[0][1:]
+		ev.Command = ws[1]
+
+		paramIndex = 2
+	} else {
+		// Server did not send a prefix
+		ev.Prefix = ""
+		ev.Command = ws[0]
+
+		paramIndex = 2
+	}
+
+	ev.Parameters = readParams(ws, paramIndex)
+	ev.Timestamp = time.Now()
+
+	return ev, nil
+}
+
+// readParams p with parameteres starting at index
+func readParams(ws []string, index int) []string {
+	var params []string
+	wsSize := len(ws)
+
+	for i, p := range ws[index:wsSize] {
+		if len(p) > 0 && p[0] == ':' {
+			params = append(params, strings.Join(ws[i:wsSize], " "))
+			break
+		} else {
+			params = append(params, p)
+		}
+	}
+
+	return params
 }
