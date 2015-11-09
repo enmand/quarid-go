@@ -84,11 +84,38 @@ func NewClient(nick, ident string, tlsverify, tls bool) *Client {
 	)
 
 	c.Handle(
+		[]adapter.Filter{CommandFilter{Command: CONNECTED}},
+		c.authenticate,
+	)
+
+	c.Handle(
 		[]adapter.Filter{CommandFilter{Command: IRC_ERR_NICKNAMEINUSE}},
 		c.fixNick,
 	)
 
 	return c
+}
+
+func (i *Client) authenticate(ev *adapter.Event, c adapter.Responder) {
+	logger.Log.Infof("Authenticating for nick %s!%s", i.Nick, i.Ident)
+
+	c.Write(&adapter.Event{
+		Command: IRC_NICK,
+		Parameters: []string{
+			i.Nick,
+		},
+	})
+
+	// RFC 2812 USER command
+	c.Write(&adapter.Event{
+		Command: IRC_USER,
+		Parameters: []string{
+			i.Ident,
+			"0",
+			"*",
+			i.Nick,
+		},
+	})
 }
 
 func (i *Client) fixNick(
