@@ -87,18 +87,19 @@ func (q *quarid) LoadPlugins(dirs []string) ([]plugin.Plugin, []error) {
 }
 
 func (q *quarid) Connect() error {
+	go q.IRC.Loop()
+
 	err := q.IRC.Connect(q.Config.GetString("irc.server"))
 	if err != nil {
 		return err
 	}
 
+	q.IRC.Read()
 
 	q.IRC.Handle(
 		[]adapter.Filter{irc.CommandFilter{Command: irc.IRC_RPL_MYINFO}},
 		q.joinChan,
 	)
-
-	q.IRC.Read(0)
 
 	return err
 }
