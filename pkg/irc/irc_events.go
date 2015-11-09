@@ -112,7 +112,7 @@ func parseLine(l string) (*adapter.Event, error) {
 		ev.Prefix = ""
 		ev.Command = ws[0]
 
-		paramIndex = 2
+		paramIndex = 1
 	}
 
 	ev.Parameters = readParams(ws, paramIndex)
