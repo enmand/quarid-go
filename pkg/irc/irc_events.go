@@ -47,13 +47,16 @@ func (i *Client) Handle(fs []adapter.Filter, hf adapter.HandlerFunc) {
 	i.handlers = append(i.handlers, h)
 }
 
+// handleEvent will forward events to the proper handlers
 func (i *Client) handleEvent(ev *adapter.Event) {
 	log.Infof("Handling event: %#v", ev)
+
 	for _, h := range i.handlers {
 		for _, f := range h.Filters {
 			log.Debugf("\tChecking filter: %#v", f)
 			if f.Match(ev) {
 				log.Debug("\t\tFilter matched")
+
 				h.Handler(ev, i)
 			}
 		}
