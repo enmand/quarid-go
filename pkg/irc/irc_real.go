@@ -9,6 +9,11 @@ import (
 	"github.com/enmand/quarid-go/pkg/logger"
 )
 
+const (
+	CONNECTED    = "connected"
+	DISCONNECTED = "disconnected"
+)
+
 // Connect connects this client to the server given
 func (i *Client) Connect(server string) error {
 	var err error
@@ -32,6 +37,9 @@ func (i *Client) Connect(server string) error {
 	logger.Log.Infof("Connecting to %s", server)
 
 	go i.authenticate()
+	i.events <- &adapter.Event{
+		Command: CONNECTED,
+	}
 
 	return err
 }
@@ -45,6 +53,10 @@ func (i *Client) Disconnect() error {
 	})
 
 	err = i.conn.Close()
+
+	i.events <- &adapter.Event{
+		Command: DISCONNECTED,
+	}
 
 	i.dead <- false
 	close(i.dead)
