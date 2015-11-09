@@ -23,16 +23,18 @@ const (
 )
 
 // Read reads the data from the server, and handles events that happen
-func (i *Client) Read(n int) {
-	go i.read(n)
+func (i *Client) Read() {
+	fmt.Println("Reading....")
+	i.read()
+	fmt.Println("Read...")
+}
 
+func (i *Client) Loop() {
 	for m := range i.events {
 		go i.handleEvent(m)
 	}
 
-	if n == 0 {
-		<-i.dead
-	}
+	fmt.Println("Done reading events")
 }
 
 // Handle defines events that should be filtered to preform a handler function.
@@ -64,16 +66,15 @@ func (i *Client) handleEvent(ev *adapter.Event) {
 }
 
 // read n lines from the server. if n is 0, continue reading until we can't
-func (i *Client) read(n int) {
+func (i *Client) read() {
 	r := bufio.NewReader(i.conn)
 	tp := textproto.NewReader(r)
 
-	for current := 0; n == 0 || current < n; current++ {
+	for {
 		l, err := tp.ReadLine()
 		switch err {
 		case io.EOF:
-			logger.Log.Debugf("Read EOF after %d lines", current-1)
-			break
+			continue
 		case nil:
 			ev, err := parseLine(l)
 			if err != nil {
@@ -82,8 +83,8 @@ func (i *Client) read(n int) {
 			}
 			i.events <- ev
 		default:
-			logger.Log.Errorf("Error reading from server... passing: %s", err)
-			break
+			logger.Log.Errorf("Error reading from server: %s", err)
+			return
 		}
 	}
 }

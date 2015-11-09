@@ -50,6 +50,9 @@ type Client struct {
 	// The client's masked hostname on the server (if masked)
 	MaskedHost string
 
+	// Server is the server name the Client is connecting to
+	Server string
+
 	// If this connection is a TLS connection
 	TLS bool
 
@@ -58,9 +61,6 @@ type Client struct {
 
 	// handlers for filtered events
 	handlers []*adapter.Handler
-
-	// Dead is blocks until the conn
-	dead chan bool
 
 	// Events broadcasted from the server
 	events chan *adapter.Event
