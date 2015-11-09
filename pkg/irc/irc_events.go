@@ -7,23 +7,32 @@ package irc
 
 import (
 	"bufio"
+	"fmt"
+	"io"
 	"net/textproto"
 	"strings"
 	"time"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/enmand/quarid-go/pkg/adapter"
+	"github.com/enmand/quarid-go/pkg/logger"
 )
 
-// Loop reads the data from the server, and handles events that happen
-func (i *Client) Loop() {
-	go i.read()
+const (
+	InvalidLineSize = "Could not parse line: %d parameter given, %d expected"
+)
+
+// Read reads the data from the server, and handles events that happen
+func (i *Client) Read(n int) {
+	go i.read(n)
 
 	for m := range i.events {
 		go i.handleEvent(m)
 	}
 
-	<-i.dead
+	if n == 0 {
+		<-i.dead
+	}
 }
 
 // Handle defines events that should be filtered to preform a handler function.

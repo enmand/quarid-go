@@ -26,8 +26,8 @@ type IRC interface {
 	// Disconnect from an IRC server
 	Disconnect() error
 
-	// Loop blocks while reading from the server
-	Loop()
+	// Read blocks while reading from the server
+	Read(n int)
 
 	adapter.EventsHandler
 	adapter.Responder

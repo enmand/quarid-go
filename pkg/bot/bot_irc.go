@@ -102,7 +102,7 @@ func (q *quarid) Connect() error {
 		q.joinChan,
 	)
 
-	q.IRC.Loop()
+	q.IRC.Read(0)
 
 	return err
 }
