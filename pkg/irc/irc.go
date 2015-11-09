@@ -9,10 +9,13 @@
 package irc
 
 import (
+	"fmt"
 	"net"
 	"time"
 
 	"github.com/enmand/quarid-go/pkg/adapter"
+	"github.com/enmand/quarid-go/pkg/logger"
+	"github.com/renstrom/shortuuid"
 )
 
 // TIMEOUT is the connection timeout to the IRC server
