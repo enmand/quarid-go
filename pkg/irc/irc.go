@@ -140,7 +140,8 @@ func writeNick(nick string, c adapter.Responder) {
 
 	timeout := make(chan bool)
 	go func() {
-		time.Sleep(5 * time.Millisecond)
+		// Wait 400ms for an error
+		time.Sleep(400 * time.Millisecond)
 		timeout <- true
 	}()
 	<-timeout
