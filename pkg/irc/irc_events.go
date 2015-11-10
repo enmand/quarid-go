@@ -23,10 +23,8 @@ const (
 )
 
 // Read reads the data from the server, and handles events that happen
-func (i *Client) Read() {
-	fmt.Println("Reading....")
-	i.read()
-	fmt.Println("Read...")
+func (i *Client) Read() error {
+	return i.read()
 }
 
 func (i *Client) Loop() {
@@ -66,7 +64,7 @@ func (i *Client) handleEvent(ev *adapter.Event) {
 }
 
 // read n lines from the server. if n is 0, continue reading until we can't
-func (i *Client) read() {
+func (i *Client) read() error {
 	r := bufio.NewReader(i.conn)
 	tp := textproto.NewReader(r)
 
@@ -83,8 +81,7 @@ func (i *Client) read() {
 			}
 			i.events <- ev
 		default:
-			logger.Log.Errorf("Error reading from server: %s", err)
-			return
+			return fmt.Errorf("Error reading from server: %s", err)
 		}
 	}
 }

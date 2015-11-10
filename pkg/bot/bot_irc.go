@@ -93,7 +93,15 @@ func (q *quarid) Connect() error {
 		return err
 	}
 
-	q.IRC.Read()
+	rCh := make(chan error)
+	go func(ch chan error) {
+		ch <- q.IRC.Read()
+	}(rCh)
+
+	if readErr := <-rCh; readErr != nil {
+		logger.Log.Errorf(err.Error())
+		return err
+	}
 
 	q.IRC.Handle(
 		[]adapter.Filter{irc.CommandFilter{Command: irc.IRC_RPL_MYINFO}},
