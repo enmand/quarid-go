@@ -88,26 +88,26 @@ func NewClient(nick, ident string, tlsverify, tls bool) *Client {
 
 	c.Handle(
 		[]adapter.Filter{CommandFilter{Command: CONNECTED}},
-		c.authenticate,
+		func(ev *adapter.Event, r adapter.Responder) {
+			c.authenticate(r)
+		},
 	)
 
 	c.Handle(
 		[]adapter.Filter{CommandFilter{Command: IRC_ERR_NICKNAMEINUSE}},
-		c.fixNick,
+		func(ev *adapter.Event, r adapter.Responder) {
+			c.Nick = fixNick(c.Nick, r)
+			writeNick(c.Nick, r)
+		},
 	)
 
 	return c
 }
 
-func (i *Client) authenticate(ev *adapter.Event, c adapter.Responder) {
+func (i *Client) authenticate(c adapter.Responder) {
 	logger.Log.Infof("Authenticating for nick %s!%s", i.Nick, i.Ident)
 
-	c.Write(&adapter.Event{
-		Command: IRC_NICK,
-		Parameters: []string{
-			i.Nick,
-		},
-	})
+	writeNick(i.Nick, c)
 
 	// RFC 2812 USER command
 	c.Write(&adapter.Event{
@@ -121,19 +121,27 @@ func (i *Client) authenticate(ev *adapter.Event, c adapter.Responder) {
 	})
 }
 
-func (i *Client) fixNick(
-	ev *adapter.Event,
-	c adapter.Responder,
-) {
-	nick := i.Nick
+func fixNick(nick string, c adapter.Responder) string {
 	uniq := shortuuid.UUID()
 
 	newNick := fmt.Sprintf("%s_%s", nick, uniq)
-	i.Nick = newNick[:9] // minimum max length in 9
+	logger.Log.Debugf("Fixing nick to %s", nick)
 
-	logger.Log.Debugf("Fixing nick to %s", i.Nick)
+	return newNick[:9] // minimum max length in 9
+}
 
-	i.disconnect()
-	i.connect()
-	i.authenticate(ev, i)
+func writeNick(nick string, c adapter.Responder) {
+	c.Write(&adapter.Event{
+		Command: IRC_NICK,
+		Parameters: []string{
+			nick,
+		},
+	})
+
+	timeout := make(chan bool)
+	go func() {
+		time.Sleep(5 * time.Millisecond)
+		timeout <- true
+	}()
+	<-timeout
 }
