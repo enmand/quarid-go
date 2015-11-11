@@ -93,6 +93,11 @@ func (q *quarid) Connect() error {
 		return err
 	}
 
+	q.IRC.Handle(
+		[]adapter.Filter{irc.CommandFilter{Command: irc.IRC_RPL_MYINFO}},
+		q.joinChan,
+	)
+
 	rCh := make(chan error)
 	go func(ch chan error) {
 		ch <- q.IRC.Read()
@@ -102,11 +107,6 @@ func (q *quarid) Connect() error {
 		logger.Log.Errorf(err.Error())
 		return err
 	}
-
-	q.IRC.Handle(
-		[]adapter.Filter{irc.CommandFilter{Command: irc.IRC_RPL_MYINFO}},
-		q.joinChan,
-	)
 
 	return err
 }
