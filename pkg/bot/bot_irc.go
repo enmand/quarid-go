@@ -13,7 +13,7 @@ import (
 	"github.com/enmand/quarid-go/vm/js"
 )
 
-type quarid struct {
+type ircbot struct {
 	// Connection to the IRC server
 	IRC *irc.Client
 
@@ -27,7 +27,7 @@ type quarid struct {
 	vms map[string]vm.VM
 }
 
-func (q *quarid) initialize() error {
+func (q *ircbot) initialize() error {
 	q.IRC = irc.NewClient(
 		q.Config.GetString("irc.nick"),
 		q.Config.GetString("irc.user"),
@@ -56,7 +56,7 @@ func (q *quarid) initialize() error {
 	return nil
 }
 
-func (q *quarid) LoadPlugins(dirs []string) ([]plugin.Plugin, []error) {
+func (q *ircbot) LoadPlugins(dirs []string) ([]plugin.Plugin, []error) {
 	var ps []plugin.Plugin
 	var errs []error
 
@@ -85,7 +85,7 @@ func (q *quarid) LoadPlugins(dirs []string) ([]plugin.Plugin, []error) {
 	return ps, errs
 }
 
-func (q *quarid) Connect() error {
+func (q *ircbot) Connect() error {
 	go q.IRC.Loop()
 
 	err := q.IRC.Connect(q.Config.GetString("irc.server"))
@@ -111,19 +111,19 @@ func (q *quarid) Connect() error {
 	return err
 }
 
-func (q *quarid) Disconnect() {
+func (q *ircbot) Disconnect() {
 	q.IRC.Disconnect()
 }
 
-func (q *quarid) Plugins() []plugin.Plugin {
+func (q *ircbot) Plugins() []plugin.Plugin {
 	return q.plugins
 }
 
-func (q *quarid) VMs() map[string]vm.VM {
+func (q *ircbot) VMs() map[string]vm.VM {
 	return q.vms
 }
 
-func (q *quarid) joinChan(
+func (q *ircbot) joinChan(
 	ev *adapter.Event,
 	c adapter.Responder,
 ) {
