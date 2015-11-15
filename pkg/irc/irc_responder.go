@@ -21,7 +21,7 @@ func (i *Client) Write(ev *adapter.Event) error {
 	payload = append(payload, []byte(ev.Command))
 	for i, p := range ev.Parameters {
 		if i == len(ev.Parameters)-1 && len(ev.Parameters) > 1 {
-			p = fmt.Sprintf(":%s\r\n", p)
+			p = fmt.Sprintf(":%s", p)
 		}
 		payload = append(payload, []byte(p))
 	}
