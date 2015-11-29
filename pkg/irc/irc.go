@@ -70,7 +70,7 @@ type Client struct {
 }
 
 // NewClient returns a new IRC client
-func NewClient(nick, ident string, tlsverify, tls bool) *Client {
+func NewClient(nick, ident string, tls, tlsverify bool) *Client {
 	c := &Client{
 		Nick:      nick,
 		Ident:     ident,

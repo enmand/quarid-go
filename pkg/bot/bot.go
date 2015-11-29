@@ -1,41 +1,30 @@
 package bot
 
 import (
-	"fmt"
-
-	"github.com/enmand/quarid-go/pkg/config"
-	"github.com/enmand/quarid-go/pkg/plugin"
-	"github.com/enmand/quarid-go/vm"
+	"github.com/enmand/quarid-go/pkg/adapter"
+	"github.com/enmand/quarid-go/pkg/irc"
+	"github.com/satori/go.uuid"
 )
 
-// Bot can connect to a service and forward events
-type Bot interface {
-	// Load all of the plugins in each `dir`
-	LoadPlugins(dir []string) ([]plugin.Plugin, []error)
-
-	// Connect to the configured server
-	Connect() error
-
-	// Disconnect from the server
-	Disconnect()
-
-	// Return a map of initialzed Plugins for this bot
-	Plugins() []plugin.Plugin
-
-	// A list of VMs that the bot has available
-	VMs() map[string]vm.VM
+// Manager manages adapters and events
+type Manager struct {
+	Identity uuid.UUID
+	Name     string
 }
 
-// New returns a new instance of a Bot
-func New(cfg *config.Config) *ircbot {
-	bot := &ircbot{
-		Config: cfg,
+// NewManager returns a new instance of a Manager
+func NewManager(nickname string) Manager {
+	return Manager{
+		Identity: uuid.NewV4(),
+		Name:     nickname,
 	}
+}
 
-	err := bot.initialize()
-	if err != nil {
-		panic(fmt.Sprintf("Could not initialize bot: %s", err))
-	}
+func (b adapter.Manager) IRC(server, user string, tls, tlsVerify bool) adapter.Adapter {
+	bot := &ircbot{}
+
+	bot.server = server
+	bot.IRC = irc.NewClient(b.Name, user, tls, tlsVerify)
 
 	return bot
 }
