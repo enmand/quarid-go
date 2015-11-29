@@ -3,7 +3,7 @@
 package adapter
 
 import (
-	"time",
+	"time"
 )
 
 // Event represents a single events read from the IRC server
