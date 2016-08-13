@@ -2,7 +2,8 @@ DEV_PID=/tmp/quarid-dev.pid
 
 all: bin/quarid-go bin/quarid-irc
 
-bin/quarid-go: | deps.lock
+bin/quarid-go:
+	glide install
 	mkdir -p bin
 	go build -o bin/quarid-go ./cmd/quaridd
 
@@ -18,11 +19,6 @@ $GOPATH/bin/quarid-go: | deps.lock
 $GOPATH/bin/quarid-irc: | deps.lock
 	go install ./cmd/quaridirc
 
-deps.lock:
-	go get github.com/tools/godep
-	godep restore
-	touch deps.lock
-
 .PHONY: dev dev_restart dev_kill clean
 
 clean:
@@ -30,7 +26,7 @@ clean:
 
 dev:
 	@make dev_restart
-	@fswatch -o . -e Godeps -e bin | xargs -n1 -I{}  make dev_restart || make dev_kill
+	@fswatch -o . -e vendor -e bin | xargs -n1 -I{}  make dev_restart || make dev_kill
 
 dev_kill:
 	@kill `cat $(DEV_PID)` || true
