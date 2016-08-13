@@ -1,5 +1,6 @@
 package pkg
 
 const (
-	VERSION = "0.1"
+	// Version is the current version of Quarid
+	Version = "0.1"
 )

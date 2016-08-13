@@ -14,6 +14,18 @@ type ircbot struct {
 	server string
 }
 
+// NewIRC returns an adpater.Adpater, with an open connection to an IRC server
+func NewIRC(server, nick, ident string, tls, tlsVerify bool) adapter.Adapter {
+	c := irc.NewClient(nick, ident, tls, tlsVerify)
+
+	b := &ircbot{
+		IRC:    c,
+		server: server,
+	}
+
+	return b
+}
+
 // Connect this bot to the IRC server
 func (q *ircbot) Start() error {
 	go q.IRC.Loop()

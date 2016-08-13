@@ -2,7 +2,6 @@ package bot
 
 import (
 	"github.com/enmand/quarid-go/pkg/adapter"
-	"github.com/enmand/quarid-go/pkg/irc"
 	"github.com/satori/go.uuid"
 )
 
@@ -20,11 +19,7 @@ func NewManager(nickname string) Manager {
 	}
 }
 
-func (b adapter.Manager) IRC(server, user string, tls, tlsVerify bool) adapter.Adapter {
-	bot := &ircbot{}
-
-	bot.server = server
-	bot.IRC = irc.NewClient(b.Name, user, tls, tlsVerify)
-
-	return bot
+// IRC returns an IRC connections as an adapter.Adapter
+func (b Manager) IRC(server, user string, tls, tlsVerify bool) adapter.Adapter {
+	return NewIRC(server, b.Name, user, tls, tlsVerify)
 }
