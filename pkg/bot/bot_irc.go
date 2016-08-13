@@ -1,7 +1,6 @@
 package bot
 
 import (
-	"github.com/Sirupsen/logrus"
 	irc "github.com/enmand/go-ircclient"
 	"github.com/enmand/quarid-go/pkg/adapter"
 )
@@ -14,7 +13,7 @@ type ircbot struct {
 	server string
 }
 
-// NewIRC returns an adpater.Adpater, with an open connection to an IRC server
+// NewIRC returns an adapter.Adapter, with an open connection to an IRC server
 func NewIRC(server, nick, ident string, tls, tlsVerify bool) adapter.Adapter {
 	c := irc.NewClient(nick, ident, tls, tlsVerify)
 
@@ -28,24 +27,14 @@ func NewIRC(server, nick, ident string, tls, tlsVerify bool) adapter.Adapter {
 
 // Connect this bot to the IRC server
 func (q *ircbot) Start() error {
-	go q.IRC.Loop()
+	go q.IRC.Loop() // loop handles IRC events
 
 	err := q.IRC.Connect(q.server)
 	if err != nil {
 		return err
 	}
 
-	rCh := make(chan error)
-	go func(ch chan error) {
-		ch <- q.IRC.Read()
-	}(rCh)
-
-	if readErr := <-rCh; readErr != nil {
-		logrus.Errorf(err.Error())
-		return err
-	}
-
-	return err
+	return q.IRC.Read()
 }
 
 func (q *ircbot) Stop() error {
@@ -53,9 +42,20 @@ func (q *ircbot) Stop() error {
 }
 
 func (q *ircbot) Handle(fs []adapter.Filter, hf adapter.HandlerFunc) {
+	ircFs := []irc.Filter{}
+
+	for _, f := range fs {
+		ircFilter := f.(adapter.IRCFilter).Filter
+		ircFs = append(ircFs, ircFilter)
+	}
+
+	q.IRC.Handle(ircFs, func(ircEv *irc.Event, c irc.IRC) {
+		resp := adapter.NewIRCResponder(c.(*irc.Client))
+		hf(adapter.FromIRCEvent(ircEv), resp)
+	})
 
 }
 
-func (q *ircbot) Write(ev adapter.Event) error {
-	return q.IRC.Write(ev.(*irc.Event))
+func (q *ircbot) Write(ev *adapter.Event) error {
+	return q.IRC.Write(adapter.ToIRCEvent(ev))
 }
