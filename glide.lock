@@ -1,0 +1,62 @@
+hash: e8bbf0e6f5fcebe070216071ac9d1479d3e48b51692144c6f3ff9c5151712e70
+updated: 2016-08-13T11:43:15.267672306-03:00
+imports:
+- name: github.com/boltdb/bolt
+  version: dfb21201d9270c1082d5fb0f07f500311ff72f18
+- name: github.com/BurntSushi/toml
+  version: 056c9bc7be7190eaa7715723883caffa5f8fa3e4
+- name: github.com/enmand/go-ircclient
+  version: 72a57fe903b0bee71db1b7bac34c9ed0ee5c7f37
+- name: github.com/gin-gonic/gin
+  version: fd5d4294a5d5223d55fc76d7840f4b0ad91647bb
+- name: github.com/kr/pretty
+  version: e6ac2fc51e89a3249e82157fa0bb7a18ef9dd5bb
+- name: github.com/kr/text
+  version: e373e137fafd8abd480af49182dea0513914adb4
+- name: github.com/magiconair/properties
+  version: c265cfa48dda6474e208715ca93e987829f572f8
+- name: github.com/manucorporat/sse
+  version: fe6ea2c8e398672518ef204bf0fbd9af858d0e15
+- name: github.com/mattn/go-colorable
+  version: d67e0b7d1797975196499f79bcc322c08b9f218b
+- name: github.com/mitchellh/mapstructure
+  version: 740c764bc6149d3f1806231418adb9f52c11bcbf
+- name: github.com/pborman/uuid
+  version: a97ce2ca70fa5a848076093f05e639a89ca34d06
+- name: github.com/renstrom/shortuuid
+  version: 847debec9c7c091fdb85d26bfe9111c0be3dca08
+- name: github.com/robertkrimen/otto
+  version: c2346f4ada7cdbda7f3523c87d986c91d4677b98
+  subpackages:
+  - dbg
+  - underscore
+  - ast
+  - file
+  - parser
+  - registry
+  - token
+- name: github.com/satori/go.uuid
+  version: 6b8e5b55d20d01ad47ecfe98e5171688397c61e9
+- name: github.com/Sirupsen/logrus
+  version: 539d4dc034c079a7188b5d4ca9650632d73c66e8
+- name: github.com/spf13/cast
+  version: ee815aaf958c707ad07547cd62150d973710f747
+- name: github.com/spf13/jwalterweatherman
+  version: 3d60171a64319ef63c78bd45bd60e6eab1e75f8b
+- name: github.com/spf13/pflag
+  version: 67cbc198fd11dab704b214c1e629a97af392c085
+- name: github.com/spf13/viper
+  version: 2abb1bebfde865b0bb6bb7ada5be63ec78527fa6
+- name: golang.org/x/net
+  version: b4e17d61b15679caf2335da776c614169a1b4643
+  subpackages:
+  - context
+- name: gopkg.in/bluesuncorp/validator.v5
+  version: d5acf1dac43705f8bfbb71d878e290e2bed3950b
+- name: gopkg.in/yaml.v2
+  version: d466437aa4adc35830964cffc5b5f262c63ddcb4
+- name: upper.io/db
+  version: 78a126318c1e08ecd604115ae0ce20294da1a7ce
+  subpackages:
+  - postgresql
+testImports: []
