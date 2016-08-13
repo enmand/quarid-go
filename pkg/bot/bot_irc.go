@@ -1,9 +1,9 @@
 package bot
 
 import (
+	"github.com/Sirupsen/logrus"
+	irc "github.com/enmand/go-ircclient"
 	"github.com/enmand/quarid-go/pkg/adapter"
-	"github.com/enmand/quarid-go/pkg/irc"
-	"github.com/enmand/quarid-go/pkg/logger"
 )
 
 type ircbot struct {
@@ -41,7 +41,7 @@ func (q *ircbot) Start() error {
 	}(rCh)
 
 	if readErr := <-rCh; readErr != nil {
-		logger.Log.Errorf(err.Error())
+		logrus.Errorf(err.Error())
 		return err
 	}
 
@@ -49,15 +49,13 @@ func (q *ircbot) Start() error {
 }
 
 func (q *ircbot) Stop() error {
-	q.IRC.Disconnect()
-
-	return nil
+	return q.IRC.Disconnect()
 }
 
 func (q *ircbot) Handle(fs []adapter.Filter, hf adapter.HandlerFunc) {
 
 }
 
-func (q *ircbot) Write(ev *adapter.Event) error {
-	return q.IRC.Write(ev)
+func (q *ircbot) Write(ev adapter.Event) error {
+	return q.IRC.Write(ev.(*irc.Event))
 }

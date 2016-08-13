@@ -5,14 +5,14 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	qvm "github.com/enmand/quarid-go/vm"
+	qvm "github.com/enmand/quarid-go/pkg/vm"
 
 	log "github.com/Sirupsen/logrus"
 )
 
 type plugin struct {
-	path string `json:"-"`
-	vm   qvm.VM `json:"-"`
+	path string
+	vm   qvm.VM
 
 	Name string `json:"name"`
 	VM   string `json:"vm"`
@@ -34,11 +34,7 @@ func (p *plugin) Compile() error {
 	}
 
 	_, err = p.vm.LoadScript(p.path, string(m))
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 func (p *plugin) Load(vms map[string]qvm.VM) error {
@@ -50,11 +46,8 @@ func (p *plugin) Load(vms map[string]qvm.VM) error {
 	p = pp.(*plugin) // Set our plugin configuration our loaded config
 	log.Infof("Loading plugin: %s (in VM: %s)", p.Name, p.VM)
 
-	if err := p.Compile(); err != nil {
-		return err
-	}
-
-	return nil
+	err = p.Compile()
+	return err
 }
 
 // Load JSON-based plugin configuration from plugin.json
@@ -85,11 +78,11 @@ func (p *plugin) pluginConfig(vms map[string]qvm.VM) (Plugin, error) {
 		`, p.Name, pp.Name)
 	}
 
-	if v, ok := vms[pp.VM]; !ok {
+	v, ok := vms[pp.VM]
+	if !ok {
 		return nil, fmt.Errorf("The VM '%s' is not available", p.VM)
-	} else {
-		pp.vm = v
 	}
+	pp.vm = v
 
 	return pp, nil
 }

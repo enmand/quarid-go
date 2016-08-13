@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/Sirupsen/logrus"
 	flag "github.com/spf13/pflag"
 
 	"github.com/spf13/viper"
@@ -25,7 +26,9 @@ func init() {
 
 	flag.StringVar(&configFile, "config", "", "")
 	flag.Parse()
-	c.BindPFlag("config", flag.Lookup("config"))
+	if err := c.BindPFlag("config", flag.Lookup("config")); err != nil {
+		logrus.Fatalf("Unable to bind flags: %s", err)
+	}
 
 	if c.GetString("config") == "" {
 		// Read from "default" configuration path
