@@ -9,9 +9,8 @@ import (
 	Dbg "github.com/robertkrimen/otto/dbg"
 )
 
-// Implements require() in the JavaScript VM.
+// RequireFunc iImplements require() in the JavaScript VM.
 func RequireFunc(call otto.FunctionCall) otto.Value {
-
 	v, _ := call.Otto.Get(_modpath)
 
 	path, _ := call.Argument(0).ToString()
@@ -19,9 +18,9 @@ func RequireFunc(call otto.FunctionCall) otto.Value {
 
 	if !strings.Contains(path, ".") {
 		return _internalRequire(call, fullPath)
-	} else {
-		return _externalRequire(call, fullPath)
 	}
+
+	return _externalRequire(call, fullPath)
 }
 
 func _internalRequire(call otto.FunctionCall, path string) otto.Value {

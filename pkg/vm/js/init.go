@@ -3,7 +3,7 @@ package js
 import (
 	"fmt"
 
-	"github.com/enmand/quarid-go/vm"
+	"github.com/enmand/quarid-go/pkg/vm"
 	"github.com/robertkrimen/otto"
 	_ "github.com/robertkrimen/otto/underscore" // underscorejs for otto
 )
@@ -16,18 +16,21 @@ type jsvm struct {
 }
 
 // NewVM returns a new Otto-based JavaScript virtual machine
-func NewVM() vm.VM {
+func NewVM() (vm.VM, error) {
 	v := &jsvm{
 		vm: otto.New(),
 	}
 
-	v.initialize()
+	err := v.initialize()
+	if err != nil {
+		return nil, err
+	}
 
-	return v
+	return v, nil
 }
 
 func (v *jsvm) Type() string {
-	return vm.JS
+	return vm.JavaScript
 }
 
 func (v *jsvm) LoadScript(path string, source string) (interface{}, error) {
@@ -47,7 +50,9 @@ func (v *jsvm) LoadScript(path string, source string) (interface{}, error) {
 func (v *jsvm) Run(path string) (string, error) {
 	module := v.modules[path]
 
-	v.vm.Set(_modpath, path)
+	if err := v.vm.Set(_modpath, path); err != nil {
+		return "", err
+	}
 
 	val, err := v.vm.Run(module.(*otto.Script))
 	if err != nil {
@@ -65,7 +70,5 @@ func (v *jsvm) Run(path string) (string, error) {
 func (v *jsvm) initialize() error {
 	v.modules = make(map[string]interface{})
 
-	v.vm.Set("require", RequireFunc)
-
-	return nil
+	return v.vm.Set("require", RequireFunc)
 }

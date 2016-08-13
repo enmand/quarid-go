@@ -1,23 +1,8 @@
 package vm
 
 const (
-	// JS is the JavaScript VM
-	JS = "js"
-
-	// TODO
-	// PY is the Python VM
-	PY = "py"
-	// LUA is the Lua VM
-	LUA = "lua"
-
-	// PROLOG is the Prolog VM
-	PROLOG = "prolog"
-
-	// PHP is the PHP VM
-	PHP = "php"
-
-	// Haskell is the Haskell VM
-	HASKELL = "haskell"
+	// JavaScript runtime VM
+	JavaScript = "js"
 )
 
 // A VM is a language-based virtual machine for running loading, and
