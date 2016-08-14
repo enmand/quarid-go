@@ -1,10 +1,10 @@
 hash: 8bd3133e828d26a115321bf55d49248bd0e81211f01642ddfaa9f115cd3acb98
-updated: 2016-08-13T21:20:07.983205166-03:00
+updated: 2016-08-13T21:39:01.748554562-03:00
 imports:
 - name: github.com/BurntSushi/toml
   version: 99064174e013895bbd9b025c31100bd1d9b590ca
 - name: github.com/enmand/go-ircclient
-  version: 72a57fe903b0bee71db1b7bac34c9ed0ee5c7f37
+  version: 9187056d1f9f8bb2b593c944f2b410e9d4c4622d
 - name: github.com/fsnotify/fsnotify
   version: a8a77c9133d2d6fd8334f3260d06f60e8d80a5fb
 - name: github.com/hashicorp/hcl
@@ -28,8 +28,6 @@ imports:
   version: a22138067af1c4942683050411a841ade67fe1eb
 - name: github.com/pkg/sftp
   version: a71e8f580e3b622ebff585309160b1cc549ef4d2
-- name: github.com/renstrom/shortuuid
-  version: d728e00b727de969356736fabe7c6f405347a26c
 - name: github.com/satori/go.uuid
   version: 879c5887cd475cd7864858769793b2ceb0d44feb
 - name: github.com/Sirupsen/logrus
