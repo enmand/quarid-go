@@ -82,3 +82,23 @@ func autoJoinChans(
 		})
 	}
 }
+
+func (q *quarid) operBot(
+	ev *adapter.Event,
+	c adapter.Responder,
+) {
+
+	ircOper := q.Config.GetString("irc.operator.user")
+	ircPass := q.Config.GetString("irc.operator.pass")
+	if len(ircOper) > 0 && len(ircPass) > 0 {
+		logger.Log.Info("Logging in as Oper...")
+		ev := &adapter.Event{
+			Command:    irc.IRC_OPER,
+			Parameters: []string{ircOper, ircPass},
+		}
+		q.IRC.Write(ev)
+	} else {
+		logger.Log.Info("No Oper settings detected")
+	}
+
+}
