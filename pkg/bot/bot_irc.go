@@ -76,7 +76,7 @@ func autoJoinChans(
 	chans []string,
 ) func(*adapter.Event, adapter.Responder) {
 	return func(ev *adapter.Event, r adapter.Responder) {
-		r.Write(&adapter.Event{
+		_ = r.Write(&adapter.Event{
 			Command:    irc.IRC_JOIN,
 			Parameters: chans,
 		})

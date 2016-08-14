@@ -17,7 +17,7 @@ type Event struct {
 	// The parameters to the command the client (or server) is sending/sent
 	Parameters []string
 
-	// The time the Event was recieved
+	// The time the Event was received
 	Timestamp time.Time
 }
 
