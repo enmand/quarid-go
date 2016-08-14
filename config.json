@@ -1,5 +1,4 @@
 {
-	"listen": ":8080",
 	"timezone": "America/New_York",
 	"log": {
 		"file": "quarid.log",
@@ -7,12 +6,7 @@
 		"//": "See (github.com/sirupsen/logrus).Level for 'level' value"
 	},
 
-	"database": "postgres://quarid:quarid@192.168.99.100/quarid?sslmode=disable",
-
 	"plugins_dirs": ["plugins"],
-	"vm": {
-		"database": "boltdb://./crates/"
-	},
 
 	"irc": {
 		"nick": "Quarid",
