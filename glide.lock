@@ -1,62 +1,68 @@
-hash: e8bbf0e6f5fcebe070216071ac9d1479d3e48b51692144c6f3ff9c5151712e70
-updated: 2016-08-13T11:43:15.267672306-03:00
+hash: 8bd3133e828d26a115321bf55d49248bd0e81211f01642ddfaa9f115cd3acb98
+updated: 2016-08-13T21:20:07.983205166-03:00
 imports:
-- name: github.com/boltdb/bolt
-  version: dfb21201d9270c1082d5fb0f07f500311ff72f18
 - name: github.com/BurntSushi/toml
-  version: 056c9bc7be7190eaa7715723883caffa5f8fa3e4
+  version: 99064174e013895bbd9b025c31100bd1d9b590ca
 - name: github.com/enmand/go-ircclient
   version: 72a57fe903b0bee71db1b7bac34c9ed0ee5c7f37
-- name: github.com/gin-gonic/gin
-  version: fd5d4294a5d5223d55fc76d7840f4b0ad91647bb
-- name: github.com/kr/pretty
-  version: e6ac2fc51e89a3249e82157fa0bb7a18ef9dd5bb
-- name: github.com/kr/text
-  version: e373e137fafd8abd480af49182dea0513914adb4
+- name: github.com/fsnotify/fsnotify
+  version: a8a77c9133d2d6fd8334f3260d06f60e8d80a5fb
+- name: github.com/hashicorp/hcl
+  version: d8c773c4cba11b11539e3d45f93daeaa5dcf1fa1
+  subpackages:
+  - hcl/ast
+  - hcl/parser
+  - hcl/token
+  - json/parser
+  - hcl/scanner
+  - hcl/strconv
+  - json/scanner
+  - json/token
+- name: github.com/kr/fs
+  version: 2788f0dbd16903de03cb8186e5c7d97b69ad387b
 - name: github.com/magiconair/properties
-  version: c265cfa48dda6474e208715ca93e987829f572f8
-- name: github.com/manucorporat/sse
-  version: fe6ea2c8e398672518ef204bf0fbd9af858d0e15
-- name: github.com/mattn/go-colorable
-  version: d67e0b7d1797975196499f79bcc322c08b9f218b
+  version: b3f6dd549956e8a61ea4a686a1c02a33d5bdda4b
 - name: github.com/mitchellh/mapstructure
-  version: 740c764bc6149d3f1806231418adb9f52c11bcbf
-- name: github.com/pborman/uuid
-  version: a97ce2ca70fa5a848076093f05e639a89ca34d06
+  version: ca63d7c062ee3c9f34db231e352b60012b4fd0c1
+- name: github.com/pkg/errors
+  version: a22138067af1c4942683050411a841ade67fe1eb
+- name: github.com/pkg/sftp
+  version: a71e8f580e3b622ebff585309160b1cc549ef4d2
 - name: github.com/renstrom/shortuuid
-  version: 847debec9c7c091fdb85d26bfe9111c0be3dca08
-- name: github.com/robertkrimen/otto
-  version: c2346f4ada7cdbda7f3523c87d986c91d4677b98
-  subpackages:
-  - dbg
-  - underscore
-  - ast
-  - file
-  - parser
-  - registry
-  - token
+  version: d728e00b727de969356736fabe7c6f405347a26c
 - name: github.com/satori/go.uuid
-  version: 6b8e5b55d20d01ad47ecfe98e5171688397c61e9
+  version: 879c5887cd475cd7864858769793b2ceb0d44feb
 - name: github.com/Sirupsen/logrus
-  version: 539d4dc034c079a7188b5d4ca9650632d73c66e8
+  version: 4b6ea7319e214d98c938f12692336f7ca9348d6b
+- name: github.com/spf13/afero
+  version: cc9c21814bb945440253108c4d3c65c85aac3c68
+  subpackages:
+  - mem
+  - sftp
 - name: github.com/spf13/cast
-  version: ee815aaf958c707ad07547cd62150d973710f747
+  version: e31f36ffc91a2ba9ddb72a4b6a607ff9b3d3cb63
 - name: github.com/spf13/jwalterweatherman
-  version: 3d60171a64319ef63c78bd45bd60e6eab1e75f8b
+  version: 33c24e77fb80341fe7130ee7c594256ff08ccc46
 - name: github.com/spf13/pflag
-  version: 67cbc198fd11dab704b214c1e629a97af392c085
+  version: f676131e2660dc8cd88de99f7486d34aa8172635
 - name: github.com/spf13/viper
-  version: 2abb1bebfde865b0bb6bb7ada5be63ec78527fa6
-- name: golang.org/x/net
-  version: b4e17d61b15679caf2335da776c614169a1b4643
+  version: 346299ea79e446ebdddb834371ceba2e5926b732
+- name: golang.org/x/crypto
+  version: a548aac93ed489257b9d959b40fe1e8c1e20778c
   subpackages:
-  - context
-- name: gopkg.in/bluesuncorp/validator.v5
-  version: d5acf1dac43705f8bfbb71d878e290e2bed3950b
+  - ssh
+  - curve25519
+  - ed25519
+  - ed25519/internal/edwards25519
+- name: golang.org/x/sys
+  version: a646d33e2ee3172a661fc09bca23bb4889a41bc8
+  subpackages:
+  - unix
+- name: golang.org/x/text
+  version: 2910a502d2bf9e43193af9d68ca516529614eed3
+  subpackages:
+  - transform
+  - unicode/norm
 - name: gopkg.in/yaml.v2
-  version: d466437aa4adc35830964cffc5b5f262c63ddcb4
-- name: upper.io/db
-  version: 78a126318c1e08ecd604115ae0ce20294da1a7ce
-  subpackages:
-  - postgresql
+  version: e4d366fc3c7938e2958e662b4258c7a89e1f0e3e
 testImports: []
