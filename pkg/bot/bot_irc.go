@@ -14,13 +14,25 @@ type ircbot struct {
 }
 
 // NewIRC returns an adapter.Adapter, with an open connection to an IRC server
-func NewIRC(server, nick, ident string, tls, tlsVerify bool) adapter.Adapter {
+func NewIRC(
+	server, nick, ident string,
+	autojoins []string,
+	tls, tlsVerify bool,
+) adapter.Adapter {
 	c := irc.NewClient(nick, ident, tls, tlsVerify)
 
 	b := &ircbot{
 		IRC:    c,
 		server: server,
 	}
+
+	b.Handle([]adapter.Filter{
+		adapter.IRCFilter{
+			Filter: irc.CommandFilter{
+				Command: irc.IRC_RPL_WELCOME,
+			},
+		},
+	}, autoJoinChans(autojoins))
 
 	return b
 }
@@ -58,4 +70,15 @@ func (q *ircbot) Handle(fs []adapter.Filter, hf adapter.HandlerFunc) {
 
 func (q *ircbot) Write(ev *adapter.Event) error {
 	return q.IRC.Write(adapter.ToIRCEvent(ev))
+}
+
+func autoJoinChans(
+	chans []string,
+) func(*adapter.Event, adapter.Responder) {
+	return func(ev *adapter.Event, r adapter.Responder) {
+		r.Write(&adapter.Event{
+			Command:    irc.IRC_JOIN,
+			Parameters: chans,
+		})
+	}
 }

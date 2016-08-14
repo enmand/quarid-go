@@ -20,6 +20,10 @@ func NewManager(nickname string) Manager {
 }
 
 // IRC returns an IRC connections as an adapter.Adapter
-func (b Manager) IRC(server, user string, tls, tlsVerify bool) adapter.Adapter {
-	return NewIRC(server, b.Name, user, tls, tlsVerify)
+func (b Manager) IRC(
+	server, user string,
+	autojoins []string,
+	tls, tlsVerify bool,
+) adapter.Adapter {
+	return NewIRC(server, b.Name, user, autojoins, tls, tlsVerify)
 }

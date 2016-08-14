@@ -16,6 +16,7 @@ func main() {
 	ircbot := q.IRC(
 		c.GetString("irc.server"),
 		c.GetString("irc.user"),
+		c.GetStringSlice("irc.channels"),
 		c.GetBool("irc.tls.enable"),
 		c.GetBool("irc.tls.verify"),
 	)
