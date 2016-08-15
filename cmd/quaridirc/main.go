@@ -24,9 +24,7 @@ func main() {
 	ircbot.Handle(
 		[]adapter.Filter{
 			adapter.IRCFilter{
-				Filter: irc.CommandFilter{
-					Command: "*",
-				},
+				Filter: irc.CommandFilter("*"),
 			},
 		},
 		logIRC,

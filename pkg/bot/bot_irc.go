@@ -28,9 +28,7 @@ func NewIRC(
 
 	b.Handle([]adapter.Filter{
 		adapter.IRCFilter{
-			Filter: irc.CommandFilter{
-				Command: irc.IRC_RPL_WELCOME,
-			},
+			Filter: irc.CommandFilter(irc.IRC_RPL_WELCOME),
 		},
 	}, autoJoinChans(autojoins))
 
