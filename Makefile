@@ -1,13 +1,18 @@
 DEV_PID=/tmp/quarid-dev.pid
 
-all: bin/quarid-irc
+all: bin/quarid-irc bin/quarid-python
 
 Gopkg.lock:
 	dep ensure
 
-bin/quarid-irc:  Gopkg.lock
+bin:
 	mkdir -p bin
+
+bin/quarid-irc: bin Gopkg.lock
 	go build -o bin/quarid-irc ./cmd/quaridirc
+
+bin/qurid-python: bin Gopkg.lock
+	go build -o ./bin/quarid-python ./cmd/quarid-python
 
 $GOPATH/bin/quarid-go: | Gopkg.lock
 	go install ./cmd/quaridd

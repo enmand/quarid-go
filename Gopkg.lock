@@ -9,6 +9,12 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/chzyer/readline"
+  packages = ["."]
+  revision = "a4d5111b617813c5d09df1ba6d76394ed71b1644"
+
+[[projects]]
+  branch = "master"
   name = "github.com/enmand/go-ircclient"
   packages = ["."]
   revision = "683361fd3a47f0ceffb7f251df8334e1c299c3ba"
@@ -26,10 +32,46 @@
   revision = "23c074d0eceb2b8a5bfdbb271ab780cde70f05a8"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/juju/ansiterm"
+  packages = [".","tabwriter"]
+  revision = "35c59b9e0fe275705a71bf5d58ee293f27efbbc4"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/liamzdenek/go-pthreads"
+  packages = ["."]
+  revision = "ccaf4c64741e3e1b10f21f618127496927cd4e91"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/lunixbochs/vtclean"
+  packages = ["."]
+  revision = "d14193dfc626125c831501c1c42340b4248e1f5a"
+
+[[projects]]
   name = "github.com/magiconair/properties"
   packages = ["."]
   revision = "be5ece7dd465ab0765a9682137865547526d1dfb"
   version = "v1.7.3"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/manifoldco/promptui"
+  packages = [".","list","screenbuf"]
+  revision = "6b68b09d09f5e58fa1a583437920fb0154cf366e"
+
+[[projects]]
+  name = "github.com/mattn/go-colorable"
+  packages = ["."]
+  revision = "167de6bfdfba052fa6b2d3664c8f5272e23c9072"
+  version = "v0.0.9"
+
+[[projects]]
+  name = "github.com/mattn/go-isatty"
+  packages = ["."]
+  revision = "0360b2af4f38e8d38c7fce2a9f4e702702d73a39"
+  version = "v0.0.3"
 
 [[projects]]
   branch = "master"
@@ -112,6 +154,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "ffe0263c71142959870d185635930518dbef5b410dcb5c0c92cd2ebe702557c7"
+  inputs-digest = "b18b6d16a2a259804b1f0aeaadbe93fef3eeae984643bcaa9c5c94b6c7f077ba"
   solver-name = "gps-cdcl"
   solver-version = 1

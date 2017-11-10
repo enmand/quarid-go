@@ -12,6 +12,7 @@ import (
 	"github.com/enmand/quarid-go/pkg/adapter"
 	"github.com/enmand/quarid-go/pkg/bot"
 	"github.com/enmand/quarid-go/pkg/config"
+	"github.com/enmand/quarid-go/pkg/vm/python"
 )
 
 func main() {

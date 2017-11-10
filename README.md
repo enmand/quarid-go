@@ -15,7 +15,9 @@ Othwise, run: `$GOPATH/bin/quarid-go --config config.json`
 ## Getting Started
 ### Requirements
 
-This bot has been tested with *Go 1.4.1*, although *Go 1.3* should work as well.
+- Install Go
+- Install Python development libraries
+- Install pkg-config
 
 ### Your $GOPATH
 
