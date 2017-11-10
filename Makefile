@@ -2,19 +2,18 @@ DEV_PID=/tmp/quarid-dev.pid
 
 all: bin/quarid-irc
 
-deps.lock: glide.lock
-	glide up
-	touch $@
+Gopkg.lock:
+	dep ensure
 
-bin/quarid-irc:  deps.lock
+bin/quarid-irc:  Gopkg.lock
 	mkdir -p bin
 	go build -o bin/quarid-irc ./cmd/quaridirc
 
-$GOPATH/bin/quarid-go: | deps.lock
+$GOPATH/bin/quarid-go: | Gopkg.lock
 	go install ./cmd/quaridd
 
 
-$GOPATH/bin/quarid-irc: | deps.lock
+$GOPATH/bin/quarid-irc: | Gopkg.lock
 	go install ./cmd/quaridirc
 
 .PHONY: dev dev_restart dev_kill clean
