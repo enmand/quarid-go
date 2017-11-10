@@ -1,10 +1,10 @@
-hash: 8bd3133e828d26a115321bf55d49248bd0e81211f01642ddfaa9f115cd3acb98
-updated: 2016-08-13T21:39:01.748554562-03:00
+hash: a510b74f978a43ced00f5fb10a6c88bf34a0f291cd4f585f8a86dbcfd806c583
+updated: 2017-11-09T06:26:48.268829-04:00
 imports:
 - name: github.com/BurntSushi/toml
   version: 99064174e013895bbd9b025c31100bd1d9b590ca
 - name: github.com/enmand/go-ircclient
-  version: 9187056d1f9f8bb2b593c944f2b410e9d4c4622d
+  version: 683361fd3a47f0ceffb7f251df8334e1c299c3ba
 - name: github.com/fsnotify/fsnotify
   version: a8a77c9133d2d6fd8334f3260d06f60e8d80a5fb
 - name: github.com/hashicorp/hcl
@@ -12,10 +12,10 @@ imports:
   subpackages:
   - hcl/ast
   - hcl/parser
-  - hcl/token
-  - json/parser
   - hcl/scanner
   - hcl/strconv
+  - hcl/token
+  - json/parser
   - json/scanner
   - json/token
 - name: github.com/kr/fs
@@ -30,8 +30,10 @@ imports:
   version: a71e8f580e3b622ebff585309160b1cc549ef4d2
 - name: github.com/satori/go.uuid
   version: 879c5887cd475cd7864858769793b2ceb0d44feb
+- name: github.com/sbinet/go-python
+  version: ac4579f132fff506b2f6b3eda4c9282b4be59a08
 - name: github.com/Sirupsen/logrus
-  version: 4b6ea7319e214d98c938f12692336f7ca9348d6b
+  version: ba1b36c82c5e05c4f912a88eab0dcd91a171688f
 - name: github.com/spf13/afero
   version: cc9c21814bb945440253108c4d3c65c85aac3c68
   subpackages:
@@ -48,10 +50,10 @@ imports:
 - name: golang.org/x/crypto
   version: a548aac93ed489257b9d959b40fe1e8c1e20778c
   subpackages:
-  - ssh
   - curve25519
   - ed25519
   - ed25519/internal/edwards25519
+  - ssh
 - name: golang.org/x/sys
   version: a646d33e2ee3172a661fc09bca23bb4889a41bc8
   subpackages:
