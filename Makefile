@@ -1,14 +1,12 @@
 DEV_PID=/tmp/quarid-dev.pid
 
-all: bin/quarid-go bin/quarid-irc
+all: bin/quarid-irc
 
-bin/quarid-go:
-	glide install
-	mkdir -p bin
-	go build -o bin/quarid-go ./cmd/quaridd
+deps.lock: glide.lock
+	glide up
+	touch $@
 
-
-bin/quarid-irc: | deps.lock
+bin/quarid-irc:  deps.lock
 	mkdir -p bin
 	go build -o bin/quarid-irc ./cmd/quaridirc
 

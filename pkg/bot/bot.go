@@ -6,24 +6,16 @@ import (
 )
 
 // Manager manages adapters and events
-type Manager struct {
+type Bot struct {
 	Identity uuid.UUID
-	Name     string
+	adapter  adapter.Adapter
 }
 
 // NewManager returns a new instance of a Manager
-func NewManager(nickname string) Manager {
-	return Manager{
+func New(a adapter.Adapter) *Bot {
+	return &Bot{
 		Identity: uuid.NewV4(),
-		Name:     nickname,
-	}
-}
 
-// IRC returns an IRC connections as an adapter.Adapter
-func (b Manager) IRC(
-	server, user string,
-	autojoins []string,
-	tls, tlsVerify bool,
-) adapter.Adapter {
-	return NewIRC(server, b.Name, user, autojoins, tls, tlsVerify)
+		adapter: a,
+	}
 }
