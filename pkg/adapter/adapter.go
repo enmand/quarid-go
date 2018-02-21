@@ -35,6 +35,7 @@ type Adapter interface {
 type EventsHandler interface {
 	// Handle a portion of events, based on a filter
 	Handle(f []Filter, h HandlerFunc)
+	HandleFilter(f Filter, h HandlerFunc)
 }
 
 // Responder writes an event to the server

@@ -25,20 +25,8 @@ func main() {
 		c.GetBool("irc.tls.verify"),
 	)
 
-	a.Handle(
-		[]adapter.Filter{
-			adapter.IRCFilter{
-				Filter: irc.CommandFilter("*"),
-			},
-		},
-		logIRC,
-	)
-	a.Handle(
-		[]adapter.Filter{
-			adapter.IRCFilter{
-				Filter: irc.CommandFilter(irc.IRC_RPL_WELCOME),
-			},
-		},
+	a.HandleFilter(adapter.IRCFilter{irc.CommandFilter("*")}, logIRC)
+	a.HandleFilter(adapter.IRCFilter{irc.CommandFilter(irc.IRC_RPL_WELCOME)},
 		func(event *adapter.Event, r adapter.Responder) {
 			_ = r.Write(&adapter.Event{
 				Command:    irc.IRC_JOIN,
@@ -47,19 +35,13 @@ func main() {
 		},
 	)
 
-	a.Handle(
-		[]adapter.Filter{
-			adapter.IRCFilter{
-				Filter: &irc.RegExpFilter{
-					Param:      irc.RegExpFilterParameters,
-					Expression: *regexp.MustCompile("sup\\?"),
-				},
-			},
-		},
+	a.HandleFilter(
+		adapter.IRCFilter{&irc.RegExpFilter{
+			Param:      irc.RegExpFilterParameters,
+			Expression: *regexp.MustCompile("sup\\?"),
+		}},
 		func(event *adapter.Event, r adapter.Responder) {
 			event.Timestamp = time.Time{}
-
-			fmt.Printf("%# v", event)
 
 			r.Write(&adapter.Event{
 				Command:    irc.IRC_PRIVMSG,

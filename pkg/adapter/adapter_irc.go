@@ -34,6 +34,14 @@ func (r *IRC) Stop() error {
 }
 
 func (r *IRC) Handle(fs []Filter, h HandlerFunc) {
+	r.handle(fs, h)
+}
+
+func (r *IRC) HandleFilter(f Filter, h HandlerFunc) {
+	r.handle([]Filter{f}, h)
+}
+
+func (r *IRC) handle(fs []Filter, h HandlerFunc) {
 	handleFs := []irc.Filter{}
 
 	for _, f := range fs {
