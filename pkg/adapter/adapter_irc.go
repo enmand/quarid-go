@@ -50,30 +50,29 @@ func (r *IRC) handle(fs []Filter, h HandlerFunc) {
 	}
 
 	r.c.Handle(handleFs, func(event *irc.Event, c irc.IRC) {
-		h(FromIRCEvent(event), r)
+		h(fromIRCEvent(event), r)
 	})
-
 }
 
 func (r *IRC) Write(ev *Event) error {
-	ircEv := ToIRCEvent(ev)
+	ircEv := toIRCEvent(ev)
 	return r.c.Write(ircEv)
 }
 
 // IRCFilter matches an Filter for IRC events
 type IRCFilter struct {
-	Filter irc.Filter
+	irc.Filter
 }
 
 // Match will match *Events for the given IRC filter
 func (f IRCFilter) Match(ev *Event) bool {
-	ircEv := ToIRCEvent(ev)
+	ircEv := toIRCEvent(ev)
 
 	return f.Filter.Match(ircEv)
 }
 
-// ToIRCEvent returns an *irc.Event for the *Event
-func ToIRCEvent(ev *Event) *irc.Event {
+// toIRCEvent returns an *irc.Event for the *Event
+func toIRCEvent(ev *Event) *irc.Event {
 	return &irc.Event{
 		Prefix:     ev.Prefix,
 		Command:    ev.Command,
@@ -82,8 +81,8 @@ func ToIRCEvent(ev *Event) *irc.Event {
 	}
 }
 
-// FromIRCEvent returns an *Event from an *irc.Event
-func FromIRCEvent(ircEv *irc.Event) *Event {
+// fromIRCEvent returns an *Event from an *irc.Event
+func fromIRCEvent(ircEv *irc.Event) *Event {
 	return &Event{
 		Prefix:     ircEv.Prefix,
 		Command:    ircEv.Command,
