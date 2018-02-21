@@ -39,3 +39,7 @@ func (p *plugin) Run(ev *adapter.Event) error {
 
 	return nil
 }
+
+func (p *plugin) Load() error {
+	return nil
+}
