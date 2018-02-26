@@ -12,6 +12,7 @@ import (
 	"github.com/enmand/quarid-go/pkg/adapter"
 	"github.com/enmand/quarid-go/pkg/bot"
 	"github.com/enmand/quarid-go/pkg/config"
+	"github.com/enmand/quarid-go/pkg/plugin"
 )
 
 func main() {
@@ -67,7 +68,14 @@ func main() {
 			})
 		})
 
-	ircbot := bot.New(a)
+	ircbot := bot.New([]adapter.Adapter{a})
+
+	plugins, err := plugin.LoadPlugins(c.GetStringSlice("plugin_dirs"))
+	if err != nil {
+		logrus.Fatalf("error loading plugins: %s", err)
+	}
+
+	fmt.Printf("%# v", plugins)
 
 	errCh := make(chan error)
 	go start(ircbot, errCh)
@@ -82,13 +90,12 @@ func start(b *bot.Bot, errCh chan error) {
 	}
 
 	defer func() {
-		err := b.Stop()
-		if err != nil {
+		errCh := b.Stop()
+		if err := <-errCh; err != nil {
 			errCh <- err
 		}
 	}()
 
-	errCh <- err
 }
 
 func logIRC(ev *adapter.Event, r adapter.Responder) {

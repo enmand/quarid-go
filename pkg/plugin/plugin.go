@@ -1,41 +1,53 @@
 package plugin
 
-import "github.com/enmand/quarid-go/pkg/adapter"
+import (
+	"io/ioutil"
+
+	"github.com/enmand/quarid-go/pkg/adapter"
+	"github.com/pkg/errors"
+)
 
 // Type defines the runtime to use for the given Plugin
 type Type string
 
-var (
-	// TypePython defines Python-based modules
-	TypePython = Type("python")
-)
+var ()
 
 // Plugin is a runnable set of instructions, that can react to an event
-type Plugin interface {
-	Load() error
-	Run(ev *adapter.Event) error
+type Plugin struct {
+	pluginType Type
+	path       string
+	filters    []adapter.Filter
+}
+
+// LoadPlugins a set of plugins from a path
+func LoadPlugins(path []string) ([]Plugin, error) {
+	for _, dir := range path {
+		finfos, err := ioutil.ReadDir(dir)
+		if err != nil {
+			return nil, errors.Wrap(err, "unable to read plugin dir")
+		}
+		for _, plugin := range finfos {
+			if plugin.IsDir() {
+				// load plugin dir
+			} else {
+				// load plugin file
+			}
+		}
+	}
+
+	return nil, nil
 }
 
 // New returns a new Plugin that can be used to react to events
-func New(t Type, path string, fs []adapter.Filter) Plugin {
-	return &plugin{
+func New(t Type, path string, fs []adapter.Filter) *Plugin {
+	return &Plugin{
 		pluginType: t,
 		path:       path,
 		filters:    fs,
 	}
 }
 
-type plugin struct {
-	pluginType Type
-	path       string
-	filters    []adapter.Filter
-}
-
-func (p *plugin) Run(ev *adapter.Event) error {
-	switch p.pluginType {
-	case TypePython:
-		// Do pythony stuff here
-	}
-
+// Run the plugin for the event provided
+func (p *Plugin) Run(ev *adapter.Event) error {
 	return nil
 }
