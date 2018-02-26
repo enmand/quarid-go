@@ -5,17 +5,37 @@ import (
 	"github.com/satori/go.uuid"
 )
 
-// Manager manages adapters and events
+// Bot manages adapters and events
 type Bot struct {
 	Identity uuid.UUID
-	adapter  adapter.Adapter
+	adapters []adapter.Adapter
 }
 
-// NewManager returns a new instance of a Manager
-func New(a adapter.Adapter) *Bot {
+// New returns a new instance of a Bot
+func New(a []adapter.Adapter) *Bot {
 	return &Bot{
 		Identity: uuid.NewV4(),
 
-		adapter: a,
+		adapters: a,
 	}
+}
+
+// Start the bot and it's adapters
+func (b *Bot) Start() chan error {
+	errCh := make(chan error)
+	for _, a := range b.adapters {
+		errCh <- a.Start()
+	}
+
+	return errCh
+}
+
+// Stop the bot and it's adapters
+func (b *Bot) Stop() chan error {
+	errCh := make(chan error)
+	for _, a := range b.adapters {
+		errCh <- a.Stop()
+	}
+
+	return errCh
 }
