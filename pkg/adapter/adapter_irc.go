@@ -19,8 +19,6 @@ func NewIRC(server, nick, user string, tls, verifyCert bool) *IRC {
 }
 
 func (r *IRC) Start() error {
-	go r.c.Loop()
-
 	err := r.c.Connect(r.server)
 	if err != nil {
 		return err
