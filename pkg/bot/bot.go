@@ -21,21 +21,17 @@ func New(a []adapter.Adapter) *Bot {
 }
 
 // Start the bot and it's adapters
-func (b *Bot) Start() chan error {
-	errCh := make(chan error)
+func (b *Bot) Start(errCh chan error) {
 	for _, a := range b.adapters {
-		errCh <- a.Start()
+		go func(a adapter.Adapter, ch chan error) {
+			ch <- a.Start()
+		}(a, errCh)
 	}
-
-	return errCh
 }
 
 // Stop the bot and it's adapters
-func (b *Bot) Stop() chan error {
-	errCh := make(chan error)
+func (b *Bot) Stop(errCh chan error) {
 	for _, a := range b.adapters {
 		errCh <- a.Stop()
 	}
-
-	return errCh
 }

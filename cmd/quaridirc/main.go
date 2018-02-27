@@ -84,18 +84,10 @@ func main() {
 }
 
 func start(b *bot.Bot, errCh chan error) {
-	err := b.Start()
-	if err != nil {
+	b.Start(errCh)
+	if err := <-errCh; err != nil {
 		panic(fmt.Sprintf("Unable to start: %s", err))
 	}
-
-	defer func() {
-		errCh := b.Stop()
-		if err := <-errCh; err != nil {
-			errCh <- err
-		}
-	}()
-
 }
 
 func logIRC(ev *adapter.Event, r adapter.Responder) {
