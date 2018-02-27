@@ -18,6 +18,13 @@ $GOPATH/bin/quarid-irc: | Gopkg.lock
 
 .PHONY: dev dev_restart dev_kill clean
 
+metalint:
+	gometalinter \
+    --concurrency=2 --deadline=1m --sort=path \
+    --disable=dupl --disable=vetshadow --enable=misspell \
+		--enable nakedret --vendor \
+    ./...
+
 clean:
 	rm bin/quarid-go
 
