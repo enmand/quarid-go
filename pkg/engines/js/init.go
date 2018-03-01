@@ -38,7 +38,9 @@ func (v *jsvm) Compile(path string, source string) (interface{}, error) {
 		return nil, fmt.Errorf("Plugin named %s already exists", path)
 	}
 
-	s, err := v.vm.Compile("", source)
+	source = fmt.Sprintf("var exports = {}; %s;", source)
+
+	s, err := v.vm.Run(source)
 	if err != nil {
 		return nil, fmt.Errorf("Could not compile %s: %s", path, err)
 	}
