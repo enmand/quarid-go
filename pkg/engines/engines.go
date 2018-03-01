@@ -1,8 +1,9 @@
 package engines
 
+type Type int
+
 const (
-	// JS is the JavaScript engine
-	JS = "js"
+	JS Type = iota
 )
 
 // An Engine is a plugin runtime
@@ -16,5 +17,5 @@ type Engine interface {
 	// Run a previously loaded script in the VM
 	Run(name string, args ...interface{}) (string, error)
 
-	Type() string
+	Type() Type
 }

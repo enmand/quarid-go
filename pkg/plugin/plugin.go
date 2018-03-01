@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 
 	"github.com/enmand/quarid-go/pkg/adapter"
+	"github.com/enmand/quarid-go/pkg/engines"
 	"github.com/pkg/errors"
 )
 
@@ -39,7 +40,7 @@ func LoadPlugins(path []string) ([]Plugin, error) {
 }
 
 // New returns a new Plugin that can be used to react to events
-func New(t Type, path string, fs []adapter.Filter) *Plugin {
+func New(t engines.Type, path string, fs []adapter.Filter) *Plugin {
 	return &Plugin{
 		pluginType: t,
 		path:       path,

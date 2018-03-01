@@ -29,7 +29,7 @@ func (v *jsvm) Load() error {
 	return v.initialize()
 }
 
-func (v *jsvm) Type() string {
+func (v *jsvm) Type() engines.Type {
 	return engines.JS
 }
 
