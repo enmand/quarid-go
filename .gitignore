@@ -8,3 +8,5 @@ Session.vim
 *~
 quarid-irc
 vendor/
+.vscode
+bin
