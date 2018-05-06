@@ -36,3 +36,7 @@
 
 [[constraint]]
   name = "github.com/spf13/viper"
+
+[[override]]
+  branch = "master"
+  name = "github.com/UnnoTed/fileb0x"

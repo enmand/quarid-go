@@ -2,18 +2,36 @@ DEV_PID=/tmp/quarid-dev.pid
 
 all: bin/quarid-irc
 
+CMDS=\
+	github.com/UnnoTed/fileb0x
+
+# Vendor command or code generation
+
+define CMD_VENDOR_BIN
+vendor/bin/$(notdir $(1)): vendor/$(1) | vendor
+	go build -a -o $$@ ./vendor/$(1)
+BINS+=vendor/bin/$(notdir $(1))
+vendor/$(1): Gopkg.lock
+	dep ensure -v --vendor-only
+endef
+
+$(foreach cmd,$(CMDS),$(eval $(call CMD_VENDOR_BIN,$(cmd))))
+
+generated: vendor/bin/fileb0x
+	./vendor/bin/fileb0x langsupport.yaml
+
 Gopkg.lock:
 	dep ensure
 
-bin/quarid-irc:  Gopkg.lock
+bin/%: | generated Gopkg.lock
 	mkdir -p bin
-	go build -o bin/quarid-irc ./cmd/quaridirc
+	go build -o bin/$* ./cmd/$*
 
 $GOPATH/bin/quarid-go: | Gopkg.lock
 	go install ./cmd/quaridd
 
 
-$GOPATH/bin/quarid-irc: | Gopkg.lock
+$GOPATH/bin/quarid-irc: engines-js | Gopkg.lock
 	go install ./cmd/quaridirc
 
 .PHONY: dev dev_restart dev_kill clean
@@ -25,9 +43,10 @@ metalint:
 		--enable nakedret --vendor \
     ./...
 
-clean:
-	rm bin/quarid-go
-
+clean: 
+	rm -fR bin/
+	rm -fR generated
+	
 dev:
 	@make dev_restart
 	@fswatch -o . -e vendor -e bin | xargs -n1 -I{}  make dev_restart || make dev_kill
