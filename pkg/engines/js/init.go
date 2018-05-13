@@ -122,10 +122,10 @@ func (v *jsvm) initialize() error {
 	v.vm.Set("require", NewRequire(v.vm).Require)
 	NewWeakMap(v.vm).Enable()
 	NewMap(v.vm).Enable()
-	//v.vm.Set("WeakSet", v.WeakSet)
 	NewSet(v.vm).Enable("WeakSet")
 	v.vm.Set("Symbol", NewSymbol)
 	NewSet(v.vm).Enable()
+	NewConsole(v.vm).Enable()
 
 	return nil
 }
