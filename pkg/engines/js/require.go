@@ -1,13 +1,13 @@
 package js
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 	"sync"
 
 	"github.com/dop251/goja"
 	"github.com/enmand/quarid-go/generated/langsupport"
+	"github.com/pkg/errors"
 )
 
 // Require implements the 'require(module)' pattern from NodeJS
@@ -51,8 +51,8 @@ func (r *Require) _internalRequire(call goja.FunctionCall, path string) goja.Val
 	script, err := readBoxedFile(path)
 	if err != nil || script == nil {
 		// No external module found, let's search our internal path
-		r.requireError(path, "internal", err)
-		return r._internalRequire(call, path)
+		r.requireError(path, "internal", fmt.Errorf("unable to read file: %s", err))
+		return nil
 
 	}
 	source := "(function(module, exports) {" + string(*script) + "\n})"
@@ -89,15 +89,13 @@ func readBoxedFile(path string) (*string, error) {
 	var fullPath string
 	if strings.HasPrefix(path, "!") {
 		fullPath = fmt.Sprintf("js/%s", path[1:])
-	}
-
-	if strings.HasPrefix(path, "@") {
+	} else {
 		fullPath = fmt.Sprintf("js/node_modules/%s", path)
 	}
 
 	d, err := langsupport.ReadFile(fullPath)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, fmt.Sprintf("unable to read file %s", fullPath))
 	}
 
 	script := string(d)
