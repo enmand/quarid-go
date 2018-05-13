@@ -18,4 +18,7 @@ type Engine interface {
 	Run(name string, args ...interface{}) (string, error)
 
 	Type() Type
+
+	// Return the runtime for the engine, if one is available
+	Runtime() interface{}
 }
