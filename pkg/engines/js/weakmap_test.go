@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/kr/pretty"
+
 	"github.com/dop251/goja"
 
 	gm "github.com/onsi/gomega"
@@ -14,7 +16,11 @@ func TestWeakMapConstructor(t *testing.T) {
 
 	t.Run("Creates a WeakMap", func(t *testing.T) {
 		cases := map[string]string{
-			"without constructor": `exports.weakmap = new WeakMap();`,
+			"without constructor": `
+				exports.weakmap = new WeakMap();
+				exports.weakmapString = exports.weakmap.toString();
+				exports.type = typeof exports.weakmap;
+			`,
 			"with constructor": `
 				it = makeIterator(
 					[
@@ -23,11 +29,19 @@ func TestWeakMapConstructor(t *testing.T) {
 				);
 
 				exports.weakmap = new WeakMap(it);
+				exports.weakmapString = exports.weakmap.toString();
+				exports.type = typeof exports.weakmap;	
 			`,
 		}
 		for name, code := range cases {
 			t.Run(name, func(t *testing.T) {
 				exports, jsvm := exportWeakMap(code)
+
+				jsString := exports.Get("weakmapString")
+				gm.Expect(jsString.Export()).To(gm.Equal("[object WeakMap]"))
+
+				typeString := exports.Get("type")
+				panic(fmt.Sprintf("%# v", pretty.Formatter(typeString)))
 
 				jsWeakMap := exports.Get("weakmap")
 				gm.Expect(jsWeakMap).NotTo(gm.BeNil())
@@ -39,6 +53,7 @@ func TestWeakMapConstructor(t *testing.T) {
 				gm.Expect(nativeWeakMap).To(gm.HaveKey("clear"))
 				gm.Expect(nativeWeakMap).To(gm.HaveKey("delete"))
 				gm.Expect(nativeWeakMap).To(gm.HaveKey("has"))
+				gm.Expect(nativeWeakMap).To(gm.HaveKey("toString"))
 				gm.Expect(nativeWeakMap).ToNot(gm.HaveKey("doesnotexist"))
 			})
 		}

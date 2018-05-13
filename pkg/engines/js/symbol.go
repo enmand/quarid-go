@@ -20,5 +20,8 @@ var NewSymbol = func(runtime *goja.Runtime) map[string]interface{} {
 			return runtime.ToValue(symbols[v.Argument(0)])
 		},
 		"iterator": "@@iterator",
+		"toString": func(fcall goja.FunctionCall) goja.Value {
+			return runtime.ToValue("[object Symbol]")
+		},
 	}
 }

@@ -38,6 +38,10 @@ func (m *Map) Enable() {
 func (m *Map) constructor(call goja.ConstructorCall) *goja.Object {
 	jsmap := iterArgs(&call, m.runtime, MapMapper(m.runtime))
 
+	call.This.Set("toString", func(fcall goja.FunctionCall) goja.Value {
+		return m.runtime.ToValue("[object Map]")
+	})
+
 	call.This.Set("get", func(fcall goja.FunctionCall) goja.Value {
 		assertArgument(fcall.Arguments, 1, m.runtime)
 		val := fcall.Argument(0).Export()

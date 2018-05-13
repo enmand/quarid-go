@@ -73,8 +73,10 @@ func (r *Require) _internalRequire(call goja.FunctionCall, path string) goja.Val
 		return nil
 	}
 
+	module := r.runtime.NewObject()
 	exports := r.runtime.NewObject()
-	_, err = reqCall(out, nil, exports)
+	module.Set("exports", exports)
+	_, err = reqCall(module, module, exports)
 
 	return exports
 }

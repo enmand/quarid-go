@@ -45,6 +45,9 @@ func (wm *WeakMap) constructor(call goja.ConstructorCall) *goja.Object {
 	for k, v := range mapped {
 		jsmap[k.(uint64)] = v
 	}
+	call.This.Set("toString", func(fcall goja.FunctionCall) goja.Value {
+		return wm.runtime.ToValue("[object WeakMap]")
+	})
 
 	call.This.Set("clear", func(fcall goja.FunctionCall) goja.Value {
 		jsmap = make(map[uint64]goja.Value)

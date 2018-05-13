@@ -49,6 +49,10 @@ func (s *Set) constructor(call goja.ConstructorCall) *goja.Object {
 		jsset = append(jsset, v)
 	}
 
+	call.This.Set("toString", func(fcall goja.FunctionCall) goja.Value {
+		return s.runtime.ToValue("[object Set]")
+	})
+
 	call.This.Set("has", func(fcall goja.FunctionCall) goja.Value {
 		for _, v := range jsset {
 			if v.Equals(fcall.Argument(0)) {
