@@ -26,6 +26,11 @@ func main() {
 		c.GetBool("irc.tls.verify"),
 	)
 
+	plugins, err := plugin.LoadPlugins(c.GetStringSlice("plugins_dirs"))
+	if err != nil {
+		logrus.Fatalf("error loading plugins: %s", err)
+	}
+
 	a.Handle(
 		[]adapter.Filter{
 			adapter.IRCFilter{
@@ -44,6 +49,11 @@ func main() {
 			_ = r.Write(&adapter.Event{
 				Command:    irc.IRC_JOIN,
 				Parameters: c.GetStringSlice("irc.channels"),
+			})
+
+			r.Write(&adapter.Event{
+				Command:    irc.IRC_PRIVMSG,
+				Parameters: append(c.GetStringSlice("irc.channels"), fmt.Sprintf("hello, I have %d plugins loaded", len(plugins))),
 			})
 		},
 	)
@@ -69,13 +79,6 @@ func main() {
 		})
 
 	ircbot := bot.New([]adapter.Adapter{a})
-
-	plugins, err := plugin.LoadPlugins(c.GetStringSlice("plugin_dirs"))
-	if err != nil {
-		logrus.Fatalf("error loading plugins: %s", err)
-	}
-
-	fmt.Printf("%# v", plugins)
 
 	errCh := make(chan error)
 	go start(ircbot, errCh)
