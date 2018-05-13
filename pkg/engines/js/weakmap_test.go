@@ -140,6 +140,19 @@ func TestWeakMapConstructor(t *testing.T) {
 		gm.Expect(e).To(gm.HaveKey("set"))
 		gm.Expect(e["set"]).To(gm.BeEquivalentTo(1))
 	})
+
+	t.Run("Sets an func element in the WeakMap", func(t *testing.T) {
+		exports, jsvm := exportWeakMap(`
+			var obj = function() {}
+		
+			var wm = new WeakMap()
+			wm.set(obj, 1);
+			exports.set = wm.get(obj)
+		`)
+		e := exports.ToObject(jsvm).Export().(map[string]interface{})
+		gm.Expect(e).To(gm.HaveKey("set"))
+		gm.Expect(e["set"]).To(gm.BeEquivalentTo(1))
+	})
 }
 
 func exportWeakMap(code string) (*goja.Object, *goja.Runtime) {

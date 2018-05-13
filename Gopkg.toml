@@ -40,3 +40,19 @@
 [[override]]
   branch = "master"
   name = "github.com/UnnoTed/fileb0x"
+
+[[override]]
+  branch = "master"
+  name = "github.com/onsi/gomega" 
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/dop251/goja"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/cornelk/hashmap"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/mitchellh/hashstructure"

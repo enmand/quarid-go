@@ -2,18 +2,31 @@ package js
 
 import (
 	"fmt"
+	"unsafe"
 
 	"github.com/dop251/goja"
 	"github.com/mitchellh/hashstructure"
 )
 
-func (v *jsvm) WeakMap(call goja.ConstructorCall) *goja.Object {
-	return nil
-}
-
 // WeakMap is an implementation of a WeakMap for the JavaScrpit VM
 type WeakMap struct {
 	runtime *goja.Runtime
+}
+
+// WeakMapMapper can hash objects going into the WeakMap
+var WeakMapMapper = func(runtime *goja.Runtime) Hasher {
+	return func(jsmap map[interface{}]goja.Value, v goja.Value) {
+		kvp, ok := v.Export().([]interface{})
+		if len(kvp) < 1 || !ok {
+			panic("need key and value")
+		}
+
+		hash, err := hashstructure.Hash(kvp[0], nil)
+		if err != nil {
+			panic(fmt.Sprintf("unable to hash object: %s", err))
+		}
+		jsmap[hash] = runtime.ToValue(kvp[1])
+	}
 }
 
 // NewWeakMap returns a new WeakMap
@@ -28,42 +41,9 @@ func (wm *WeakMap) Enable() {
 
 func (wm *WeakMap) constructor(call goja.ConstructorCall) *goja.Object {
 	jsmap := make(map[uint64]goja.Value)
-
-	if len(call.Arguments) > 0 {
-		jsIter := call.Argument(0).ToObject(wm.runtime)
-		iter, ok := goja.AssertFunction(call.Argument(0).ToObject(wm.runtime).Get("next"))
-		if ok {
-			for {
-				v, err := iter(jsIter)
-				if err != nil {
-					panic(fmt.Sprintf("%s", err.Error()))
-				}
-				obj := v.ToObject(wm.runtime)
-				if goja.IsUndefined(v) && obj.Get("done").ToBoolean() == true {
-					break
-				}
-
-				val := obj.Get("value")
-				if goja.IsNull(val) || goja.IsUndefined(val) {
-					panic("no key values given")
-				}
-
-				if val == nil {
-					break
-				}
-
-				kvp, ok := val.Export().([]interface{})
-				if len(kvp) < 1 || !ok {
-					panic("need key and value")
-				}
-
-				hash, err := hashstructure.Hash(kvp[0], nil)
-				if err != nil {
-					panic(fmt.Sprintf("unable to hash object: %s", err))
-				}
-				jsmap[hash] = wm.runtime.ToValue(kvp[1])
-			}
-		}
+	mapped := iterArgs(&call, wm.runtime, WeakMapMapper(wm.runtime))
+	for k, v := range mapped {
+		jsmap[k.(uint64)] = v
 	}
 
 	call.This.Set("clear", func(fcall goja.FunctionCall) goja.Value {
@@ -72,25 +52,29 @@ func (wm *WeakMap) constructor(call goja.ConstructorCall) *goja.Object {
 	})
 
 	call.This.Set("delete", func(fcall goja.FunctionCall) goja.Value {
-		hash := assertArgument(fcall.Arguments, 1, wm.runtime)
+		assertArgument(fcall.Arguments, 1, wm.runtime)
+		hash := hashArguments(fcall.Argument(0), wm.runtime)
 		delete(jsmap, hash)
 		return wm.runtime.ToValue(true)
 	})
 
 	call.This.Set("get", func(fcall goja.FunctionCall) goja.Value {
-		hash := assertArgument(fcall.Arguments, 1, wm.runtime)
+		assertArgument(fcall.Arguments, 1, wm.runtime)
+		hash := hashArguments(fcall.Argument(0), wm.runtime)
 		return jsmap[hash]
 
 	})
 
 	call.This.Set("has", func(fcall goja.FunctionCall) goja.Value {
-		hash := assertArgument(fcall.Arguments, 1, wm.runtime)
+		assertArgument(fcall.Arguments, 0, wm.runtime)
+		hash := hashArguments(fcall.Argument(0), wm.runtime)
 		_, ok := jsmap[hash]
 		return wm.runtime.ToValue(ok)
 	})
 
 	call.This.Set("set", func(fcall goja.FunctionCall) goja.Value {
-		hash := assertArgument(fcall.Arguments, 2, wm.runtime)
+		assertArgument(fcall.Arguments, 2, wm.runtime)
+		hash := hashArguments(fcall.Argument(0), wm.runtime)
 
 		jsmap[hash] = fcall.Argument(1)
 		return nil
@@ -99,15 +83,11 @@ func (wm *WeakMap) constructor(call goja.ConstructorCall) *goja.Object {
 	return nil
 }
 
-func assertArgument(v []goja.Value, length int, runtime *goja.Runtime) uint64 {
-	if len(v) < length {
-		panic(fmt.Sprintf("no element given. required %d args", length))
-	}
-
-	key := v[0].ToObject(runtime).Export()
+func hashArguments(v goja.Value, runtime *goja.Runtime) uint64 {
+	key := v.ToObject(runtime).Export()
 	hash, err := hashstructure.Hash(key, nil)
 	if err != nil {
-		panic(fmt.Sprintf("unable to hash object: %s", err))
+		hash = *(*uint64)(unsafe.Pointer(&key))
 	}
 
 	return hash
