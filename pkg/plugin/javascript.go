@@ -1,11 +1,14 @@
 package plugin
 
 import (
+	"fmt"
+
+	"github.com/dop251/goja"
 	"github.com/enmand/quarid-go/pkg/adapter"
 	"github.com/enmand/quarid-go/pkg/engines"
 	"github.com/enmand/quarid-go/pkg/engines/js"
+	"github.com/kr/pretty"
 	"github.com/pkg/errors"
-	"github.com/robertkrimen/otto"
 )
 
 type javascript struct {
@@ -15,9 +18,12 @@ type javascript struct {
 }
 
 func newJavaScript(path string, source string) (plugin, error) {
-	vm := js.New()
+	vm, err := js.New()
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to create JavaScript engine")
+	}
 	if err := vm.Load(); err != nil {
-		return nil, errors.Wrap(err, "unable to load javascript engine")
+		return nil, errors.Wrap(err, "unable to load JavaScript engine")
 	}
 
 	return &javascript{
@@ -32,22 +38,25 @@ func (js *javascript) Filters() ([]adapter.Filter, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to compile script")
 	}
-	os := s.(otto.Value)
-	obj := os.Object()
+	fmt.Printf("%# v", pretty.Formatter(s))
+	os := s.(goja.Value)
+	fmt.Printf("%# v", pretty.Formatter(os))
+	obj := os.ToObject(js.jsvm.Runtime().(*goja.Runtime))
+	fmt.Printf("%# v", pretty.Formatter(obj))
 
-	fs := []*otto.Object{}
+	fs := []*goja.Object{}
 
 	for _, k := range obj.Keys() {
-		v, err := obj.Get(k)
-		if err != nil {
+		v := obj.Get(k)
+		if goja.IsUndefined(v) || goja.IsNull(v) {
 			return nil, errors.Wrap(err, "unable to parse filter keys")
 		}
-		f, err := v.Object().Get("filters")
-		if err != nil {
+		f := v.ToObject(js.jsvm.Runtime().(*goja.Runtime)).Get("filters")
+		if goja.IsUndefined(f) || goja.IsNull(f) {
 			return nil, errors.Wrap(err, "unable to find filters")
 		}
 
-		fs = append(fs, f.Object())
+		fs = append(fs, f.ToObject(js.jsvm.Runtime().(*goja.Runtime)))
 	}
 
 	return nil, nil
