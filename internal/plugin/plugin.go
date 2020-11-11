@@ -5,9 +5,9 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/enmand/quarid-go/pkg/adapter"
-	"github.com/enmand/quarid-go/pkg/engines"
-	"github.com/pkg/errors"
+	"github.com/enmand/quarid-go/internal/adapter"
+	"github.com/enmand/quarid-go/internal/engines"
+	"github.com/internal/errors"
 	"strings"
 )
 

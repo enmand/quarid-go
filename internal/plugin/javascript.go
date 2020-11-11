@@ -4,11 +4,11 @@ import (
 	"fmt"
 
 	"github.com/dop251/goja"
-	"github.com/enmand/quarid-go/pkg/adapter"
-	"github.com/enmand/quarid-go/pkg/engines"
-	"github.com/enmand/quarid-go/pkg/engines/js"
+	"github.com/enmand/quarid-go/internal/adapter"
+	"github.com/enmand/quarid-go/internal/engines"
+	"github.com/enmand/quarid-go/internal/engines/js"
 	"github.com/kr/pretty"
-	"github.com/pkg/errors"
+	"github.com/internal/errors"
 )
 
 type javascript struct {

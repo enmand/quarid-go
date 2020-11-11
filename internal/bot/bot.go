@@ -1,7 +1,7 @@
 package bot
 
 import (
-	"github.com/enmand/quarid-go/pkg/adapter"
+	"github.com/enmand/quarid-go/internal/adapter"
 	"github.com/satori/go.uuid"
 )
 

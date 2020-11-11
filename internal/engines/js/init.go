@@ -6,8 +6,8 @@ import (
 
 	"github.com/dop251/goja"
 	"github.com/enmand/quarid-go/generated/langsupport"
-	"github.com/enmand/quarid-go/pkg/engines"
-	"github.com/pkg/errors"
+	"github.com/enmand/quarid-go/internal/engines"
+	"github.com/internal/errors"
 )
 
 const (

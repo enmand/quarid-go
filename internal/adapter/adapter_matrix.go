@@ -3,7 +3,7 @@ package adapter
 import (
 	"fmt"
 
-	"github.com/quarid-go/pkg/config"
+	"github.com/quarid-go/internal/config"
 	"maunium.net/go/mautrix"
 	"maunium.net/go/mautrix/event"
 	"maunium.net/go/mautrix/id"
